@@ -128,10 +128,11 @@ namespace Vedom.Menu.List
                 }
             }
             comboBox1.DataSource = semestersList;
-            if (Properties.Settings.Default.semsestSave != null)
+            if (Properties.Settings.Default.semsestSave != null) 
             {
                 comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
             }
+
 
         }
 
