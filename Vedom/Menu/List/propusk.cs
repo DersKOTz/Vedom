@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
+using System.Globalization;
 
 namespace Vedom.Menu.List
 {
@@ -17,19 +18,23 @@ namespace Vedom.Menu.List
         public propusk()
         {
             InitializeComponent();
+            dateTimePicker1.Format = DateTimePickerFormat.Custom;
+            dateTimePicker1.CustomFormat = "MMMM yyyy";
+            dateTimePicker1.ShowUpDown = true;
         }
 
         private void propusk_Load(object sender, EventArgs e)
         {
-            LoadDataFromExcel();
+            DateTime selectedDate = dateTimePicker1.Value;
+            string selectedMonthYear = selectedDate.ToString("MMMM yyyy");
+            LoadDataFromExcel(selectedMonthYear);
         }
 
-        private void LoadDataFromExcel()
+        private void LoadDataFromExcel(string selectedMonthYear)
         {
-          
             string fileName = "vedom.xlsx";
             string studentsSheetName = "студенты";
-            string attendanceSheetName = "прогулы";
+            string attendanceSheetName = "Прогулы " + selectedMonthYear;
             Excel.Application excelApp = new Excel.Application();
             Excel.Workbook workbook = null;
 
@@ -37,10 +42,8 @@ namespace Vedom.Menu.List
             {
                 string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-                // Проверяем существует ли файл
                 if (!File.Exists(filePath))
                 {
-                    // Если файл не существует, создаем новый
                     workbook = excelApp.Workbooks.Add();
                     workbook.SaveAs(filePath);
                 }
@@ -59,49 +62,32 @@ namespace Vedom.Menu.List
                 Excel.Worksheet studentsSheet = null;
                 Excel.Worksheet attendanceSheet = null;
 
-                // Проверяем существует ли лист "прогулы"
-                bool attendanceSheetExists = false;
-                foreach (Excel.Worksheet sheet in workbook.Sheets)
-                {
-                    if (sheet.Name == attendanceSheetName)
-                    {
-                        attendanceSheet = sheet;
-                        attendanceSheetExists = true;
-                        break;
-                    }
-                }
+                bool selectedMonthYearExists = WorksheetExists(workbook, attendanceSheetName);
 
-                // Если лист "прогулы" не существует, создаем его
-                if (!attendanceSheetExists)
+                if (selectedMonthYearExists)
+                {
+                    attendanceSheet = workbook.Sheets[attendanceSheetName];
+                }
+                else
                 {
                     attendanceSheet = workbook.Sheets.Add();
                     attendanceSheet.Name = attendanceSheetName;
-                    workbook.Save(); // Сохраняем изменения в файле
+                    workbook.Save();
                 }
 
-                // Проверяем существует ли лист "студенты"
-                bool studentsSheetExists = false;
-                foreach (Excel.Worksheet sheet in workbook.Sheets)
-                {
-                    if (sheet.Name == studentsSheetName)
-                    {
-                        studentsSheet = sheet;
-                        studentsSheetExists = true;
-                        break;
-                    }
-                }
-
-                // Если лист "студенты" не существует, создаем его
-                if (!studentsSheetExists)
+                if (!WorksheetExists(workbook, studentsSheetName))
                 {
                     studentsSheet = workbook.Sheets.Add();
                     studentsSheet.Name = studentsSheetName;
-                    workbook.Save(); // Сохраняем изменения в файле
+                    workbook.Save();
+                }
+                else
+                {
+                    studentsSheet = workbook.Sheets[studentsSheetName];
                 }
 
                 if (studentsSheet != null && attendanceSheet != null)
                 {
-                    // Создаем DataTable для хранения данных
                     DataTable dt = new DataTable();
                     dt.Columns.Add("№");
                     dt.Columns.Add("ФИО");
@@ -115,7 +101,6 @@ namespace Vedom.Menu.List
                     dt.Columns.Add("Уваж.");
                     dt.Columns.Add("Неуваж.");
 
-                    // Загружаем данные из листа "студенты" Excel в DataTable
                     for (int i = 2; i <= studentsSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
                     {
                         DataRow row = dt.NewRow();
@@ -124,7 +109,6 @@ namespace Vedom.Menu.List
                         dt.Rows.Add(row);
                     }
 
-                    // Загружаем данные из листа "прогулы" Excel в DataTable для столбцов 1-31
                     for (int i = 2; i <= attendanceSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
                     {
                         DataRow row = dt.Rows[i - 2];
@@ -133,14 +117,12 @@ namespace Vedom.Menu.List
                             row[j.ToString()] = attendanceSheet.Cells[i, j + 2].Value;
                         }
 
-                        row["Всего"] = attendanceSheet.Cells[i, 34].Value; // Предполагается, что "Всего" находится в столбце 34
-                        row["Уваж."] = attendanceSheet.Cells[i, 35].Value; // Предполагается, что "Уваж." находится в столбце 35
-                        row["Неуваж."] = attendanceSheet.Cells[i, 36].Value; // Предполагается, что "Неуваж." находится в столбце 36
+                        row["Всего"] = attendanceSheet.Cells[i, 34].Value;
+                        row["Уваж."] = attendanceSheet.Cells[i, 35].Value;
+                        row["Неуваж."] = attendanceSheet.Cells[i, 36].Value;
                     }
 
-                    // Отображаем данные в DataGridView
                     dataGridView1.DataSource = dt;
-                    // dataGridView1.Columns["ФИО"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 }
 
                 workbook.Close();
@@ -148,17 +130,29 @@ namespace Vedom.Menu.List
             }
 
             System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
-            
+
             dataGridView1.Columns[0].Width = 30;
-            dataGridView1.Columns[0].ReadOnly = true; 
+            dataGridView1.Columns[0].ReadOnly = true;
             dataGridView1.Columns[1].ReadOnly = true;
             dataGridView1.AllowUserToAddRows = false;
+        }
+
+        private bool WorksheetExists(Excel.Workbook workbook, string worksheetName)
+        {
+            foreach (Excel.Worksheet sheet in workbook.Sheets)
+            {
+                if (sheet.Name == worksheetName)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void save_Click(object sender, EventArgs e)
         {
             string fileName = "vedom.xlsx";
-            string studentsSheetName = "прогулы";
+            string studentsSheetName = "прогулы"; // объявляем и инициализируем переменную studentsSheetName здесь
             Excel.Application excelApp = new Excel.Application();
             Excel.Workbook workbook = null;
 
@@ -185,22 +179,41 @@ namespace Vedom.Menu.List
 
             if (workbook != null)
             {
+                // Здесь идет вызов метода LoadOrCreateAttendanceSheet(), где передаем оба требуемых аргумента               
                 Excel.Worksheet worksheet = null;
 
-                // Проверяем существует ли лист "прогулы"
-                bool studentsSheetExists = false;
+                // Получаем выбранную дату из DateTimePicker
+                DateTime selectedDate = dateTimePicker1.Value;
+
+                // Формируем название листа по месяцу и году
+                string monthYearSheetName = "Прогулы " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
+
+                // Проверяем существует ли лист для текущего месяца и года
+                bool monthYearSheetExists = false;
                 foreach (Excel.Worksheet sheet in workbook.Sheets)
                 {
-                    if (sheet.Name == studentsSheetName)
+                    if (sheet.Name == monthYearSheetName)
                     {
                         worksheet = sheet;
-                        studentsSheetExists = true;
+                        monthYearSheetExists = true;
                         break;
                     }
                 }
 
+                if (!monthYearSheetExists)
+                {
+                    worksheet = workbook.Sheets.Add();
+                    worksheet.Name = monthYearSheetName;
+                    workbook.Save(); // Сохраняем изменения в файле
+                }
+                else
+                {
+                    // Если лист для текущего месяца и года существует, устанавливаем его в качестве worksheet
+                    worksheet = workbook.Sheets[monthYearSheetName];
+                }
+
                 // Если лист "прогулы" не существует, создаем его
-                if (!studentsSheetExists)
+                if (worksheet == null)
                 {
                     worksheet = workbook.Sheets.Add();
                     worksheet.Name = studentsSheetName;
@@ -255,7 +268,7 @@ namespace Vedom.Menu.List
                         // Записываем данные для столбцов "Уваж." и "Неуваж."
                         worksheet.Cells[i + 2, 35] = dt.Rows[i]["Уваж."];
                         worksheet.Cells[i + 2, 36] = dt.Rows[i]["Неуваж."];
-                        
+
                     }
                     //
                     // Сохраняем изменения в файле
@@ -269,6 +282,18 @@ namespace Vedom.Menu.List
             System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
 
             MessageBox.Show("Данные сохранены в Excel файл!");
+
         }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            DateTime selectedDate = dateTimePicker1.Value;
+            string selectedMonthYear = selectedDate.ToString("MMMM yyyy");
+            LoadDataFromExcel(selectedMonthYear);
+
+        }
+
+        
+
     }
 }
