@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{83AC5291-DDEA-4DF4-857E-7B68E0F12A5C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Vedom</RootNamespace>
+    <AssemblyName>Vedom</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.0.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.3.0.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.0.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.Framework.3.0.1\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1001\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Menu\formMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Menu\formMain.Designer.cs">
+      <DependentUpon>formMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menu\List\home.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Menu\List\home.Designer.cs">
+      <DependentUpon>home.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menu\List\mec.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Menu\List\mec.Designer.cs">
+      <DependentUpon>mec.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menu\List\predmet.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Menu\List\predmet.Designer.cs">
+      <DependentUpon>predmet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menu\List\propusk.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Menu\List\propusk.Designer.cs">
+      <DependentUpon>propusk.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menu\List\sem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Menu\List\sem.Designer.cs">
+      <DependentUpon>sem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Menu\List\student.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Menu\List\student.Designer.cs">
+      <DependentUpon>student.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Menu\formMain.resx">
+      <DependentUpon>formMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu\List\home.resx">
+      <DependentUpon>home.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu\List\mec.resx">
+      <DependentUpon>mec.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu\List\predmet.resx">
+      <DependentUpon>predmet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu\List\propusk.resx">
+      <DependentUpon>propusk.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu\List\sem.resx">
+      <DependentUpon>sem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Menu\List\student.resx">
+      <DependentUpon>student.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Menu\Notify\" />
+    <Folder Include="Menu\Other\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-delete-cross-63694.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-home-1946436.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-absence-10140288.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-students-cap-46955.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-book-4213415.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-month-5296802.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-semester-4827192.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-clear-1632708.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
