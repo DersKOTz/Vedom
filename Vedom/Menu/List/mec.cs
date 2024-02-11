@@ -55,8 +55,10 @@ namespace Vedom.Menu.List
             string fileName = "vedom.xlsx";
             string studentsSheetName = "студенты";
             string attendanceSheetName = "Прогулы " + selectedMonthYear;
+            string mecSheetName = "Ведомость " + selectedMonthYear;
             Excel.Application excelApp = new Excel.Application();
             Excel.Workbook workbook = null;
+
 
             try
             {
@@ -81,12 +83,14 @@ namespace Vedom.Menu.List
             {
                 Excel.Worksheet studentsSheet = null;
                 Excel.Worksheet attendanceSheet = null;
+                Excel.Worksheet mecSheet = null;
 
                 bool selectedMonthYearExists = WorksheetExists(workbook, attendanceSheetName);
 
                 if (selectedMonthYearExists)
                 {
                     attendanceSheet = workbook.Sheets[attendanceSheetName];
+                    mecSheet = workbook.Sheets[mecSheetName];
                 }
                 else
                 {
@@ -135,17 +139,25 @@ namespace Vedom.Menu.List
                         row["№"] = studentsSheet.Cells[i, 1].Value;
                         row["ФИО"] = studentsSheet.Cells[i, 2].Value;
 
-                        // Загрузка данных о посещаемости для каждого предмета с текущим семестром
-                        for (int j = 2; j <= disciplinesSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; j++)
+                        foreach (DataColumn column in dt.Columns)
                         {
-                            string subjectName = disciplinesSheet.Cells[j, 2].Value?.ToString();
-                            int semester = Convert.ToInt32(disciplinesSheet.Cells[j, 1].Value);
-                            if (!string.IsNullOrEmpty(subjectName) && semester == currentSemester)
+                            string columnName = column.ColumnName;
+                            int columnIndex = -1;
+
+                            // Находим индекс столбца с названием columnName в листе Excel
+                            for (int j = 1; j <= mecSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column; j++)
                             {
-                                // Предположим, что информация о посещаемости каждого студента
-                                // содержится в столбцах, начиная со столбца с индексом 6
-                                int columnIndex = j + 3; // 3 - учитываем первые три столбца (№, ФИО, Всего)
-                                row[subjectName] = attendanceSheet.Cells[i, columnIndex].Value;
+                                if (mecSheet.Cells[1, j].Value?.ToString() == columnName)
+                                {
+                                    columnIndex = j;
+                                    break;
+                                }
+                            }
+
+                            // Если столбец найден, записываем его значение в DataTable
+                            if (columnIndex != -1 && mecSheet.Cells[i, columnIndex].Value != null)
+                            {
+                                row[columnName] = mecSheet.Cells[i, columnIndex].Value.ToString();
                             }
                         }
 
@@ -153,7 +165,6 @@ namespace Vedom.Menu.List
                         row["Уваж."] = attendanceSheet.Cells[i, 35].Value;
                         row["Неуваж."] = attendanceSheet.Cells[i, 36].Value;
                         dt.Rows.Add(row);
-
                     }
 
                     dataGridView1.DataSource = dt;
@@ -163,7 +174,7 @@ namespace Vedom.Menu.List
 
                 workbook.Close();
                 excelApp.Quit();
-                    
+
             }
 
             System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
