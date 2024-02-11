@@ -107,9 +107,7 @@ namespace Vedom.Menu.List
                 }
 
                 if (studentsSheet != null && attendanceSheet != null)
-                {
-
-                    
+                {                   
                     // Получение номера текущего семестра из настроек                  
                     int currentSemester = Convert.ToInt32(Properties.Settings.Default.semsestSave);
 
@@ -219,8 +217,103 @@ namespace Vedom.Menu.List
       
         private void save_Click(object sender, EventArgs e)
         {
-            
+            string fileName = "vedom.xlsx";
+            ExportToExcel(dataGridView1, fileName);        
+        } // 
 
+        private void ExportToExcel(DataGridView dataGridView, string fileName)
+        {           
+            string studentsSheetName = "студенты"; // исправлено
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook workbook = null;
+
+            try
+            {
+                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+
+                if (!File.Exists(filePath))
+                {
+                    workbook = excelApp.Workbooks.Add();
+                    workbook.SaveAs(filePath);
+                }
+                else
+                {
+                    workbook = excelApp.Workbooks.Open(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
+            }
+
+            if (workbook != null)
+            {
+                Excel.Worksheet worksheet = null;
+
+                // Получаем выбранную дату из DateTimePicker
+                DateTime selectedDate = dateTimePicker1.Value;
+
+                // Формируем название листа по месяцу и году
+                string monthYearSheetName = "Ведомость " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
+
+                // Проверяем существует ли лист для текущего месяца и года
+                bool monthYearSheetExists = false;
+                foreach (Excel.Worksheet sheet in workbook.Sheets)
+                {
+                    if (sheet.Name == monthYearSheetName)
+                    {
+                        worksheet = sheet;
+                        monthYearSheetExists = true;
+                        break;
+                    }
+                }
+
+                if (!monthYearSheetExists)
+                {
+                    worksheet = workbook.Sheets.Add();
+                    worksheet.Name = monthYearSheetName;
+                    workbook.Save(); // Сохраняем изменения в файле
+                }
+                else
+                {
+                    // Если лист для текущего месяца и года существует, устанавливаем его в качестве worksheet
+                    worksheet = workbook.Sheets[monthYearSheetName];
+                }
+
+                // Если лист "прогулы" не существует, создаем его
+                if (worksheet == null)
+                {
+                    worksheet = workbook.Sheets.Add();
+                    worksheet.Name = studentsSheetName;
+                    workbook.Save(); // Сохраняем изменения в файле
+                }
+
+                for (int i = 0; i < dataGridView.Columns.Count; i++)
+                {
+                    worksheet.Cells[1, i + 1] = dataGridView.Columns[i].HeaderText;
+                }
+
+                // Запись данных
+                for (int i = 0; i < dataGridView.Rows.Count; i++)
+                {
+                    for (int j = 0; j < dataGridView.Columns.Count; j++)
+                    {
+                        worksheet.Cells[i + 2, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                    }
+                }
+
+
+                // Сохраняем изменения в файле
+                workbook.Save();
+                workbook.Close();
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
+                MessageBox.Show("Данные сохранены в Excel файл!");
+            }                   
         }
+
+       
+
     }
 }
