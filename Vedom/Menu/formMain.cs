@@ -27,6 +27,11 @@ namespace Vedom.Menu
             Application.Exit();
         }
 
+        public void restart(object sender, EventArgs e)
+        {
+            Application.Restart();
+            Environment.Exit(0);
+        }
 
         private void menuClose()
         {

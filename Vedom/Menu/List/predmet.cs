@@ -165,6 +165,14 @@ namespace Vedom.Menu.List
 
             // Обновляем источник данных DataGridView с учетом фильтра
             dataGridView1.DataSource = dv.ToTable();
+
+            Properties.Settings.Default.semestr = new System.Collections.Specialized.StringCollection();
+            foreach (var item in comboBox1.Items)
+            {
+                Properties.Settings.Default.semestr.Add(item.ToString());
+            }
+
+            Properties.Settings.Default.Save();
         }
 
         private void save_Click(object sender, EventArgs e)
@@ -248,6 +256,7 @@ namespace Vedom.Menu.List
             }
             System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
             MessageBox.Show("Данные сохранены в Excel файл!");
+
         }
 
 

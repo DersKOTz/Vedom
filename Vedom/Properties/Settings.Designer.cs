@@ -34,5 +34,16 @@ namespace Vedom.Properties {
                 this["semsestSave"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Specialized.StringCollection semestr {
+            get {
+                return ((global::System.Collections.Specialized.StringCollection)(this["semestr"]));
+            }
+            set {
+                this["semestr"] = value;
+            }
+        }
     }
 }
