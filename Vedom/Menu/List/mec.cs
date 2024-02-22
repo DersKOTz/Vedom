@@ -47,6 +47,10 @@ namespace Vedom.Menu.List
                     }
                 }
             }
+            if (Properties.Settings.Default.semsestSave != null)
+            {
+                comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
+            }
         }
 
 
@@ -86,18 +90,28 @@ namespace Vedom.Menu.List
                 Excel.Worksheet mecSheet = null;
 
                 bool selectedMonthYearExists = WorksheetExists(workbook, attendanceSheetName);
-
                 if (selectedMonthYearExists)
                 {
                     attendanceSheet = workbook.Sheets[attendanceSheetName];
-                    mecSheet = workbook.Sheets[mecSheetName];
+                    if (WorksheetExists(workbook, mecSheetName))
+                    {
+                        mecSheet = workbook.Sheets[mecSheetName];
+                    }
+                    else
+                    {
+                        mecSheet = workbook.Sheets.Add();
+                        mecSheet.Name = mecSheetName;
+                        workbook.Save();
+                    }
                 }
                 else
                 {
                     attendanceSheet = workbook.Sheets.Add();
                     attendanceSheet.Name = attendanceSheetName;
+
                     mecSheet = workbook.Sheets.Add();
                     mecSheet.Name = mecSheetName;
+
                     workbook.Save();
                 }
 
@@ -178,10 +192,7 @@ namespace Vedom.Menu.List
             dataGridView1.Columns[1].ReadOnly = true;
             dataGridView1.AllowUserToAddRows = false;
 
-            if (Properties.Settings.Default.semsestSave != null)
-            {
-                comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
-            }
+
         }
 
         private int FindColumnIndex(Excel.Worksheet sheet, string columnName)
