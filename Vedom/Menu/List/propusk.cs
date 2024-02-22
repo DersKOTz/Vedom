@@ -285,15 +285,11 @@ namespace Vedom.Menu.List
 
         }
 
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        private void dateTimePicker1_Leave(object sender, EventArgs e)
         {
             DateTime selectedDate = dateTimePicker1.Value;
             string selectedMonthYear = selectedDate.ToString("MMMM yyyy");
             LoadDataFromExcel(selectedMonthYear);
-
         }
-
-        
-
     }
 }
