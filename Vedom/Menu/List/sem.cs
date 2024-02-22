@@ -59,7 +59,7 @@ namespace Vedom.Menu.List
                 else
                 {
                     workbook = excelApp.Workbooks.Open(filePath);
-                }
+                } /
             }
             catch (Exception ex)
             {
