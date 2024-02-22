@@ -59,6 +59,7 @@ namespace Vedom.Menu.List
             Excel.Application excelApp = new Excel.Application();
             Excel.Workbook workbook = null;
 
+
             try
             {
                 string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
@@ -93,8 +94,8 @@ namespace Vedom.Menu.List
                 }
                 else
                 {
-                    mecSheet = workbook.Sheets.Add();
-                    mecSheet.Name = mecSheetName;
+                    attendanceSheet = workbook.Sheets.Add();
+                    attendanceSheet.Name = attendanceSheetName;
                     workbook.Save();
                 }
 
@@ -111,19 +112,21 @@ namespace Vedom.Menu.List
 
                 if (studentsSheet != null && attendanceSheet != null)
                 {
+                    // Получение номера текущего семестра из настроек                  
                     int currentSemester = Convert.ToInt32(Properties.Settings.Default.semsestSave);
 
                     DataTable dt = new DataTable();
                     dt.Columns.Add("№");
                     dt.Columns.Add("ФИО");
 
+                    // Добавление столбцов для каждого предмета с текущим семестром
                     Excel.Worksheet disciplinesSheet = workbook.Sheets["Дисциплины"];
                     for (int i = 2; i <= disciplinesSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
                     {
-                        string subjectName = disciplinesSheet.Cells[i, 2].Value?.ToString();
-                        int semester = Convert.ToInt32(disciplinesSheet.Cells[i, 1].Value);
+                        string subjectName = disciplinesSheet.Cells[i, 2].Value?.ToString(); // Получаем название предмета из листа "Дисциплины"
+                        int semester = Convert.ToInt32(disciplinesSheet.Cells[i, 1].Value); // Получаем номер семестра
                         if (!string.IsNullOrEmpty(subjectName) && semester == currentSemester)
-                            dt.Columns.Add(subjectName);
+                            dt.Columns.Add(subjectName); // Добавляем столбец с названием предмета в таблицу данных только если семестр равен текущему
                     }
 
                     dt.Columns.Add("Всего");
@@ -141,19 +144,17 @@ namespace Vedom.Menu.List
                             string columnName = column.ColumnName;
                             int columnIndex = -1;
 
-                            if (mecSheet != null && mecSheet.Cells != null)
+                            // Находим индекс столбца с названием columnName в листе Excel
+                            for (int j = 1; j <= mecSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column; j++)
                             {
-                                int lastColumn = mecSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column;
-                                for (int j = 1; j <= lastColumn; j++)
+                                if (mecSheet.Cells[1, j].Value?.ToString() == columnName)
                                 {
-                                    if (mecSheet.Cells[1, j]?.Value?.ToString() == columnName)
-                                    {
-                                        columnIndex = j;
-                                        break;
-                                    }
+                                    columnIndex = j;
+                                    break;
                                 }
                             }
 
+                            // Если столбец найден, записываем его значение в DataTable
                             if (columnIndex != -1 && mecSheet.Cells[i, columnIndex].Value != null)
                             {
                                 row[columnName] = mecSheet.Cells[i, columnIndex].Value.ToString();
@@ -167,13 +168,28 @@ namespace Vedom.Menu.List
                     }
 
                     dataGridView1.DataSource = dt;
+
+
                 }
 
                 workbook.Close();
                 excelApp.Quit();
-            }
-        }
 
+            }
+
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
+            dataGridView1.Columns[0].Width = 30;
+            dataGridView1.Columns[0].ReadOnly = true;
+            dataGridView1.Columns[1].ReadOnly = true;
+            dataGridView1.AllowUserToAddRows = false;
+
+            if (Properties.Settings.Default.semsestSave != null)
+            {
+                comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
+            }
+
+        }
         private bool WorksheetExists(Excel.Workbook workbook, string worksheetName)
         {
             foreach (Excel.Worksheet sheet in workbook.Sheets)
