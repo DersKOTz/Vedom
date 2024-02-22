@@ -50,6 +50,7 @@ namespace Vedom.Menu.List
         }
 
 
+
         private void LoadDataFromExcel(string selectedMonthYear)
         {
             string fileName = "vedom.xlsx";
@@ -93,6 +94,8 @@ namespace Vedom.Menu.List
                 }
                 else
                 {
+                    attendanceSheet = workbook.Sheets.Add();
+                    attendanceSheet.Name = attendanceSheetName;
                     mecSheet = workbook.Sheets.Add();
                     mecSheet.Name = mecSheetName;
                     workbook.Save();
@@ -109,60 +112,55 @@ namespace Vedom.Menu.List
                     studentsSheet = workbook.Sheets[studentsSheetName];
                 }
 
-                if (studentsSheet != null && attendanceSheet != null)
+                if (studentsSheet != null && attendanceSheet != null && mecSheet != null)
                 {
+                    // Получение номера текущего семестра из настроек                  
                     int currentSemester = Convert.ToInt32(Properties.Settings.Default.semsestSave);
 
                     DataTable dt = new DataTable();
                     dt.Columns.Add("№");
                     dt.Columns.Add("ФИО");
 
+                    // Получение списка предметов текущего семестра из листа "Дисциплины"
+                    List<string> subjects = new List<string>();
                     Excel.Worksheet disciplinesSheet = workbook.Sheets["Дисциплины"];
                     for (int i = 2; i <= disciplinesSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
                     {
                         string subjectName = disciplinesSheet.Cells[i, 2].Value?.ToString();
                         int semester = Convert.ToInt32(disciplinesSheet.Cells[i, 1].Value);
                         if (!string.IsNullOrEmpty(subjectName) && semester == currentSemester)
-                            dt.Columns.Add(subjectName);
+                        {
+                            subjects.Add(subjectName);
+                            dt.Columns.Add(subjectName); // Добавляем столбец для каждого предмета
+                        }
                     }
 
                     dt.Columns.Add("Всего");
                     dt.Columns.Add("Уваж.");
                     dt.Columns.Add("Неуваж.");
 
+                    // Загрузка данных из листа "Ведомость"
                     for (int i = 2; i <= studentsSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
                     {
                         DataRow row = dt.NewRow();
                         row["№"] = studentsSheet.Cells[i, 1].Value;
                         row["ФИО"] = studentsSheet.Cells[i, 2].Value;
 
-                        foreach (DataColumn column in dt.Columns)
+                        // Загрузка оценок для каждого предмета из листа "Ведомость"
+                        foreach (string subject in subjects)
                         {
-                            string columnName = column.ColumnName;
-                            int columnIndex = -1;
-
-                            if (mecSheet != null && mecSheet.Cells != null)
+                            int columnIndex = FindColumnIndex(mecSheet, subject);
+                            if (columnIndex != -1)
                             {
-                                int lastColumn = mecSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column;
-                                for (int j = 1; j <= lastColumn; j++)
-                                {
-                                    if (mecSheet.Cells[1, j]?.Value?.ToString() == columnName)
-                                    {
-                                        columnIndex = j;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (columnIndex != -1 && mecSheet.Cells[i, columnIndex].Value != null)
-                            {
-                                row[columnName] = mecSheet.Cells[i, columnIndex].Value.ToString();
+                                row[subject] = mecSheet.Cells[i, columnIndex].Value;
                             }
                         }
 
+                        // Загрузка данных о прогулах из листа "Прогулы"
                         row["Всего"] = attendanceSheet.Cells[i, 34].Value;
                         row["Уваж."] = attendanceSheet.Cells[i, 35].Value;
                         row["Неуваж."] = attendanceSheet.Cells[i, 36].Value;
+
                         dt.Rows.Add(row);
                     }
 
@@ -172,6 +170,34 @@ namespace Vedom.Menu.List
                 workbook.Close();
                 excelApp.Quit();
             }
+
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
+            dataGridView1.Columns[0].Width = 30;
+            dataGridView1.Columns[0].ReadOnly = true;
+            dataGridView1.Columns[1].ReadOnly = true;
+            dataGridView1.AllowUserToAddRows = false;
+
+            if (Properties.Settings.Default.semsestSave != null)
+            {
+                comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
+            }
+        }
+
+        private int FindColumnIndex(Excel.Worksheet sheet, string columnName)
+        {
+            if (sheet != null && sheet.Cells != null)
+            {
+                int lastColumn = sheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column;
+                for (int j = 1; j <= lastColumn; j++)
+                {
+                    if (sheet.Cells[1, j]?.Value?.ToString() == columnName)
+                    {
+                        return j;
+                    }
+                }
+            }
+            return -1; // Столбец с заданным заголовком не найден
         }
 
         private bool WorksheetExists(Excel.Workbook workbook, string worksheetName)
@@ -287,7 +313,15 @@ namespace Vedom.Menu.List
                 {
                     for (int j = 0; j < dataGridView.Columns.Count; j++)
                     {
-                        worksheet.Cells[i + 2, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                        if (dataGridView.Rows[i].Cells[j].Value != null)
+                        {
+                            worksheet.Cells[i + 2, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                        }
+                        else
+                        {
+                            // Обработка случая, когда значение ячейки равно null
+                            worksheet.Cells[i + 2, j + 1] = ""; // Или другое значение по умолчанию
+                        }
                     }
                 }
 
