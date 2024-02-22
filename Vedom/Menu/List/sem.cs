@@ -146,6 +146,7 @@ namespace Vedom.Menu.List
                         {
                             row[columnName] = vedomSheet.Cells[i, columnIndex].Value.ToString();
                         }
+
                     }
 
                     // row["Всего"] = attendanceSheet.Cells[i, 34].Value;
@@ -206,6 +207,97 @@ namespace Vedom.Menu.List
             string fileName = "vedom.xlsx";
             ExportToExcel(dataGridView1, fileName);
         }
+
+        /* это крч с 4 строки
+        private void ExportToExcel(DataGridView dataGridView, string fileName)
+        {
+            string studentsSheetName = "студенты"; // исправлено
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook workbook = null;
+
+            try
+            {
+                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+
+                if (!File.Exists(filePath))
+                {
+                    workbook = excelApp.Workbooks.Add();
+                    workbook.SaveAs(filePath);
+                }
+                else
+                {
+                    workbook = excelApp.Workbooks.Open(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
+            }
+
+            if (workbook != null)
+            {
+                Excel.Worksheet worksheet = null;
+
+                // Формируем название листа по месяцу и году
+                string monthYearSheetName = "Ведомость семестр №" + Properties.Settings.Default.semsestSave;
+
+                // Проверяем существует ли лист для текущего месяца и года
+                bool monthYearSheetExists = false;
+                foreach (Excel.Worksheet sheet in workbook.Sheets)
+                {
+                    if (sheet.Name == monthYearSheetName)
+                    {
+                        worksheet = sheet;
+                        monthYearSheetExists = true;
+                        break;
+                    }
+                }
+
+                if (!monthYearSheetExists)
+                {
+                    worksheet = workbook.Sheets.Add();
+                    worksheet.Name = monthYearSheetName;
+                    workbook.Save(); // Сохраняем изменения в файле
+                }
+                else
+                {
+                    // Если лист для текущего месяца и года существует, устанавливаем его в качестве worksheet
+                    worksheet = workbook.Sheets[monthYearSheetName];
+                }
+
+                // Если лист "прогулы" не существует, создаем его
+                if (worksheet == null)
+                {
+                    worksheet = workbook.Sheets.Add();
+                    worksheet.Name = studentsSheetName;
+                    workbook.Save(); // Сохраняем изменения в файле
+                }
+
+                for (int i = 0; i < dataGridView.Columns.Count; i++)
+                {
+                    worksheet.Cells[4, i + 1] = dataGridView.Columns[i].HeaderText;
+                }
+
+                // Запись данных
+                for (int i = 0; i < dataGridView.Rows.Count; i++)
+                {
+                    for (int j = 0; j < dataGridView.Columns.Count; j++)
+                    {
+                        worksheet.Cells[i + 5, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                    }
+                }
+
+
+                // Сохраняем изменения в файле
+                workbook.Save();
+                workbook.Close();
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
+                MessageBox.Show("Данные сохранены в Excel файл!");
+            }
+        }
+        */
 
         private void ExportToExcel(DataGridView dataGridView, string fileName)
         {
