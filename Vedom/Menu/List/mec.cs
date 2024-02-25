@@ -166,7 +166,7 @@ namespace Vedom.Menu.List
                             int columnIndex = FindColumnIndex(mecSheet, subject);
                             if (columnIndex != -1)
                             {
-                                row[subject] = mecSheet.Cells[i, columnIndex].Value;
+                                row[subject] = mecSheet.Cells[i + 2, columnIndex].Value; // !1
                             }
                         }
 
@@ -202,7 +202,7 @@ namespace Vedom.Menu.List
                 int lastColumn = sheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column;
                 for (int j = 1; j <= lastColumn; j++)
                 {
-                    if (sheet.Cells[1, j]?.Value?.ToString() == columnName)
+                    if (sheet.Cells[3, j]?.Value?.ToString() == columnName)
                     {
                         return j;
                     }
@@ -316,7 +316,7 @@ namespace Vedom.Menu.List
 
                 for (int i = 0; i < dataGridView.Columns.Count; i++)
                 {
-                    worksheet.Cells[1, i + 1] = dataGridView.Columns[i].HeaderText;
+                    worksheet.Cells[3, i + 1] = dataGridView.Columns[i].HeaderText;
                 }
 
                 // Запись данных
@@ -326,12 +326,12 @@ namespace Vedom.Menu.List
                     {
                         if (dataGridView.Rows[i].Cells[j].Value != null)
                         {
-                            worksheet.Cells[i + 2, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                            worksheet.Cells[i + 4, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
                         }
                         else
                         {
                             // Обработка случая, когда значение ячейки равно null
-                            worksheet.Cells[i + 2, j + 1] = ""; // Или другое значение по умолчанию
+                            worksheet.Cells[i + 4, j + 1] = ""; // Или другое значение по умолчанию
                         }
                     }
                 }
