@@ -64,7 +64,7 @@ namespace Vedom.Menu.List
             string fileName = "vedom.xlsx";
             string studentsSheetName = "студенты";
             string attendanceSheetName = "Прогулы " + selectedMonthYear;
-            string mecSheetName = "Ведомость " + selectedMonthYear;
+            string mecSheetName = "Ведомость " + selectedMonthYear + " " + Properties.Settings.Default.semsestSave;
             Excel.Application excelApp = new Excel.Application();
             Excel.Workbook workbook = null;
 
@@ -243,6 +243,7 @@ namespace Vedom.Menu.List
             DateTime selectedDate = dateTimePicker1.Value;
             string selectedMonthYear = selectedDate.ToString("MMMM yyyy");
             LoadDataFromExcel(selectedMonthYear);
+
         }
 
         private void save_Click(object sender, EventArgs e)
@@ -284,7 +285,7 @@ namespace Vedom.Menu.List
                 DateTime selectedDate = dateTimePicker1.Value;
 
                 // Формируем название листа по месяцу и году
-                string monthYearSheetName = "Ведомость " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
+                string monthYearSheetName = "Ведомость " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU")) + " " + Properties.Settings.Default.semsestSave;
 
                 // Проверяем существует ли лист для текущего месяца и года
                 bool monthYearSheetExists = false;
@@ -582,6 +583,8 @@ namespace Vedom.Menu.List
                 Excel.Range rangeRama1 = worksheet.Range[worksheet.Cells[32, 1], worksheet.Cells[37, 6]];
                 rangeRama1.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 rangeRama1.Borders.Weight = Excel.XlBorderWeight.xlThin;
+
+                worksheet.Columns[1].AutoFit();
 
                 // Сохраняем изменения в файле
                 workbook.Save();
