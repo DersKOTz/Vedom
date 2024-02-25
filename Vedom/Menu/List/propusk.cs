@@ -238,37 +238,53 @@ namespace Vedom.Menu.List
                     // Получаем данные из DataGridView
                     DataTable dt = (DataTable)dataGridView1.DataSource;
 
+                    // Проходимся по каждой строке в таблице dt
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
+                        // Получаем значения "№" и "ФИО" из текущей строки и записываем их в соответствующие ячейки в Excel
                         worksheet.Cells[i + 2, 1] = dt.Rows[i]["№"];
                         worksheet.Cells[i + 2, 2] = dt.Rows[i]["ФИО"];
 
-                        // Записываем данные в столбцы с 1 по 31 и вычисляем сумму
-                        int total = 0;
-                        for (int j = 1; j <= 31; j++)
+                        // Проверяем, если значение "ФИО" не пустое, иначе переходим к следующей строке
+                        if (!string.IsNullOrEmpty(dt.Rows[i]["ФИО"].ToString()))
                         {
-                            object value = dt.Rows[i][j.ToString()];
-                            // Проверяем, является ли значение DBNull
-                            if (value != DBNull.Value)
+                            // Записываем данные в столбцы с 1 по 31 и вычисляем сумму
+                            int total = 0;
+                            for (int j = 1; j <= 31; j++)
                             {
-                                worksheet.Cells[i + 2, j + 2] = value;
-                                // Выполняем преобразование к типу Int32 только для не-DBNull значений
-                                total += Convert.ToInt32(value);
+                                object value = dt.Rows[i][j.ToString()];
+                                // Проверяем, является ли значение DBNull
+                                if (value != DBNull.Value)
+                                {
+                                    worksheet.Cells[i + 2, j + 2] = value;
+                                    // Выполняем преобразование к типу Int32 только для не-DBNull значений
+                                    total += Convert.ToInt32(value);
+                                }
+                                else
+                                {
+                                    // Если значение DBNull, записываем 0 или другое значение по умолчанию
+                                    worksheet.Cells[i + 2, j + 2] = null; // Или другое значение по умолчанию
+                                }
+                            }
+
+                            // Записываем сумму в столбец "Всего"
+                            worksheet.Cells[i + 2, 34] = total;
+
+                            // Проверяем, содержит ли ячейка значение DBNull
+                            if (dt.Rows[i]["Уваж."] != DBNull.Value)
+                            {
+                                worksheet.Cells[i + 2, 35] = dt.Rows[i]["Уваж."]; // Записываем данные для столбца "Уваж."
+                                int uvazhValue = Convert.ToInt32(dt.Rows[i]["Уваж."]); // Приводим значение из столбца "Уваж." к типу int
+                                int neuvazhValue = total - uvazhValue; // Вычисляем значение для столбца "Неуваж."
+                                worksheet.Cells[i + 2, 36] = neuvazhValue; // Записываем значение в столбец "Неуваж."
                             }
                             else
                             {
-                                // Если значение DBNull, записываем 0 или другое значение по умолчанию
-                                worksheet.Cells[i + 2, j + 2] = 0; // Или другое значение по умолчанию
+                                // Если значение DBNull, записываем 0 в ячейку столбца "Уваж." и "Неуваж."
+                                worksheet.Cells[i + 2, 35] = 0;
+                                worksheet.Cells[i + 2, 36] = 0;
                             }
                         }
-
-                        // Записываем сумму в столбец "Всего"
-                        worksheet.Cells[i + 2, 34] = total;
-
-                        // Записываем данные для столбцов "Уваж." и "Неуваж."
-                        worksheet.Cells[i + 2, 35] = dt.Rows[i]["Уваж."];
-                        worksheet.Cells[i + 2, 36] = dt.Rows[i]["Неуваж."];
-
                     }
                     //
                     // Сохраняем изменения в файле

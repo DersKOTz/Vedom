@@ -51,6 +51,10 @@ namespace Vedom.Menu.List
             {
                 comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
             }
+            else
+            {
+                comboBox1.SelectedIndex = 0;
+            }
         }
 
 
@@ -325,9 +329,11 @@ namespace Vedom.Menu.List
                     worksheet.Cells[4, i + 1] = dataGridView.Columns[i].HeaderText;
                 }
 
+                // назв и группа
                 Excel.Range rangeNaz = worksheet.Range["A1:L1"];
                 rangeNaz.Merge();
                 rangeNaz.Value = "Ведомость аттестации и посещаемости студентов по группе NAZV" + " за " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
+
                 // Объединяем ячейки предметов
                 Excel.Range rangeToMerge = worksheet.Range[worksheet.Cells[3, 3], worksheet.Cells[3, dataGridView.Columns.Count - 3]];
                 rangeToMerge.Merge();
@@ -384,6 +390,7 @@ namespace Vedom.Menu.List
                 rangeToMerge6.Value = "Всего в группе человек";
                 Excel.Worksheet studentsSheet = workbook.Sheets["Студенты"];
                 Excel.Range fioColumn = studentsSheet.Range["B2:B26"];
+
                 // Получаем массив значений ячеек в столбце "ФИО"
                 object[,] fioValues = fioColumn.Value;
                 int fioCount = 0;
@@ -395,32 +402,6 @@ namespace Vedom.Menu.List
                     }
                 }
                 worksheet.Cells[32, 6].Value = fioCount;
-
-                // колво неусп
-                Excel.Range rangeToMerge7 = worksheet.Range[worksheet.Cells[33, 1], worksheet.Cells[33, 5]];
-                rangeToMerge7.Merge();
-                rangeToMerge7.Value = "Количество неуспевающих";
-
-                // колво на 4 и 5
-                Excel.Range rangeToMerge8 = worksheet.Range[worksheet.Cells[34, 1], worksheet.Cells[34, 5]];
-                rangeToMerge8.Merge();
-                rangeToMerge8.Value = "Количество успевающих на 4 и 5";
-
-                // абс усп
-                Excel.Range rangeToMerge9 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[35, 5]];
-                rangeToMerge9.Merge();
-                rangeToMerge9.Value = "Абсолютная успеваемость в %";
-
-                // кач усп
-                Excel.Range rangeToMerge10 = worksheet.Range[worksheet.Cells[36, 1], worksheet.Cells[36, 5]];
-                rangeToMerge10.Merge();
-                rangeToMerge10.Value = "Качественная успеваемость в %";
-
-                // поогулы на 1
-                Excel.Range rangeToMerge11 = worksheet.Range[worksheet.Cells[37, 1], worksheet.Cells[37, 5]];
-                rangeToMerge11.Merge();
-                rangeToMerge11.Value = "Прогулы на 1 человека час";
-
 
                 // клас рус
                 Excel.Range rangeToMerge12 = worksheet.Range[worksheet.Cells[40, 1], worksheet.Cells[40, 6]];
@@ -448,6 +429,130 @@ namespace Vedom.Menu.List
                         }
                     }
                 }
+
+                // колво неусп
+                Excel.Range rangeToMerge7 = worksheet.Range[worksheet.Cells[33, 1], worksheet.Cells[33, 5]];
+                rangeToMerge7.Merge();
+                rangeToMerge7.Value = "Количество неуспевающих";
+                int[] kolvoArray = new int[25]; // Создаем массив для хранения значений kolvo для каждой строки
+                Excel.Range neysp = worksheet.Range[worksheet.Cells[5, 2], worksheet.Cells[29, 2]]; // Используем строки с 5 по 29
+                int rowIndex = 0; // Индекс текущей строки в массиве kolvoArray
+                foreach (Excel.Range cell in neysp)
+                {
+                    if (cell.Value != null && cell.Value.ToString() != "")
+                    {
+                        int kolvo = 0; // Значение kolvo для текущей строки
+
+                        Excel.Range innerRange = worksheet.Range[worksheet.Cells[cell.Row, 3], worksheet.Cells[cell.Row, dataGridView.Columns.Count - 3]];
+                        foreach (Excel.Range innerCell in innerRange)
+                        {
+                            if (innerCell.Value == null || innerCell.Value.ToString() == "2")
+                            {
+                                kolvo = 1; // Если найдена двойка или ячейка пуста, устанавливаем kolvo в 1
+                                break; // Прерываем цикл, так как условие уже выполнено
+                            }
+                        }
+                        kolvoArray[rowIndex] = kolvo; // Сохраняем значение kolvo для текущей строки
+                        rowIndex++; // Переходим к следующей строке
+                    }
+                }
+                int totalKolvo = 0;
+                foreach (int kolvoValue in kolvoArray)
+                {
+                    totalKolvo += kolvoValue;
+                }
+                worksheet.Cells[33, 6].Value = totalKolvo;
+
+                Array.Clear(kolvoArray, 0, kolvoArray.Length);
+                rowIndex = 0;
+
+
+                // колво на 4 и 5
+                Excel.Range rangeToMerge8 = worksheet.Range[worksheet.Cells[34, 1], worksheet.Cells[34, 5]];
+                rangeToMerge8.Merge();
+                rangeToMerge8.Value = "Количество успевающих на 4 и 5";
+                foreach (Excel.Range cell in neysp)
+                {
+                    if (cell.Value != null && cell.Value.ToString() != "")
+                    {
+                        int kolvo = 0; // Значение kolvo для текущей строки
+                        Excel.Range innerRange = worksheet.Range[worksheet.Cells[cell.Row, 3], worksheet.Cells[cell.Row, dataGridView.Columns.Count - 3]];
+                        // Проверяем, что внутренний диапазон не пустой
+                        bool innerRangeEmpty = true;
+                        foreach (Excel.Range innerCell in innerRange)
+                        {
+                            if (innerCell.Value != null)
+                            {
+                                innerRangeEmpty = false;
+                                break;
+                            }
+                        }
+                        if (!innerRangeEmpty)
+                        {
+                            bool containsOnlyFourAndFive = true;
+                            foreach (Excel.Range innerCell in innerRange)
+                            {
+                                if (innerCell.Value == null)
+                                {
+                                    // Если значение innerCell равно null, переходим к следующей итерации цикла
+                                    continue;
+                                }
+
+                                if (innerCell.Value != null && innerCell.Value.ToString() != "")
+                                {
+                                    int value;
+                                    if (!int.TryParse(innerCell.Value.ToString(), out value))
+                                    {
+                                        containsOnlyFourAndFive = false;
+                                        break;
+                                    }
+
+                                    if (value != 4 && value != 5)
+                                    {
+                                        containsOnlyFourAndFive = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (containsOnlyFourAndFive)
+                            {
+                                kolvo = 1; // Если все значения в строке - только 4 или 5, устанавливаем kolvo в 1
+                            }
+                        }
+                        kolvoArray[rowIndex] = kolvo; // Сохраняем значение kolvo для текущей строки
+                        rowIndex++; // Переходим к следующей строке
+                    }
+                }
+                // Складываем значения kolvo для каждой строки
+                int totalKolvo1 = 0;
+                foreach (int kolvoValue in kolvoArray)
+                {
+                    totalKolvo1 += kolvoValue;
+                }
+                worksheet.Cells[34, 6].Value = totalKolvo1;
+
+
+                // абс усп
+                Excel.Range rangeToMerge9 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[35, 5]];
+                rangeToMerge9.Merge();
+                rangeToMerge9.Value = "Абсолютная успеваемость в %";
+
+
+                // кач усп
+                Excel.Range rangeToMerge10 = worksheet.Range[worksheet.Cells[36, 1], worksheet.Cells[36, 5]];
+                rangeToMerge10.Merge();
+                rangeToMerge10.Value = "Качественная успеваемость в %";
+
+
+                // поогулы на 1
+                Excel.Range rangeToMerge11 = worksheet.Range[worksheet.Cells[37, 1], worksheet.Cells[37, 5]];
+                rangeToMerge11.Merge();
+                rangeToMerge11.Value = "Прогулы на 1 человека час";
+
+
+
+
+
 
 
 
