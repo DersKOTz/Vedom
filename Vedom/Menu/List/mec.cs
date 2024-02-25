@@ -429,6 +429,30 @@ namespace Vedom.Menu.List
                         }
                     }
                 }
+                // запись всего часов
+                int v = 0;
+                int y = 0;
+                int n = 0;
+
+                for (int row = 5; row <= 29; row++)
+                {
+                    v += Convert.ToInt32(worksheet.Cells[row, 8].Value);
+                }
+                worksheet.Cells[30, 8].Value = v;
+
+                for (int row = 5; row <= 29; row++)
+                {
+                    y += Convert.ToInt32(worksheet.Cells[row, 9].Value);
+                }
+                worksheet.Cells[30, 9].Value = y;
+
+                for (int row = 5; row <= 29; row++)
+                {
+                    n += Convert.ToInt32(worksheet.Cells[row, 10].Value);
+                }
+                worksheet.Cells[30, 10].Value = n;
+
+
 
                 // колво неусп
                 Excel.Range rangeToMerge7 = worksheet.Range[worksheet.Cells[33, 1], worksheet.Cells[33, 5]];
@@ -550,11 +574,14 @@ namespace Vedom.Menu.List
                 rangeToMerge11.Value = "Прогулы на 1 человека час";
 
 
+                //рапмки
+                Excel.Range rangeRama = worksheet.Range[worksheet.Cells[3, 1], worksheet.Cells[30, dataGridView.Columns.Count]];
+                rangeRama.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                rangeRama.Borders.Weight = Excel.XlBorderWeight.xlThin;
 
-
-
-
-
+                Excel.Range rangeRama1 = worksheet.Range[worksheet.Cells[32, 1], worksheet.Cells[37, 6]];
+                rangeRama1.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                rangeRama1.Borders.Weight = Excel.XlBorderWeight.xlThin;
 
                 // Сохраняем изменения в файле
                 workbook.Save();
