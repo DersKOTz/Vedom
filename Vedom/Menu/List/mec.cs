@@ -304,6 +304,12 @@ namespace Vedom.Menu.List
                 {
                     // Если лист для текущего месяца и года существует, устанавливаем его в качестве worksheet
                     worksheet = workbook.Sheets[monthYearSheetName];
+
+                    // Удаление содержимого
+                    worksheet.Cells.ClearContents();
+
+                    // Удаление форматирования
+                    worksheet.Cells.ClearFormats();
                 }
 
                 // Если лист "прогулы" не существует, создаем его
@@ -319,16 +325,25 @@ namespace Vedom.Menu.List
                     worksheet.Cells[4, i + 1] = dataGridView.Columns[i].HeaderText;
                 }
 
+                Excel.Range rangeNaz = worksheet.Range["A1:L1"];
+                rangeNaz.Merge();
+                rangeNaz.Value = "Ведомость аттестации и посещаемости студентов по группе NAZV" + " за " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
                 // Объединяем ячейки предметов
                 Excel.Range rangeToMerge = worksheet.Range[worksheet.Cells[3, 3], worksheet.Cells[3, dataGridView.Columns.Count - 3]];
                 rangeToMerge.Merge();
                 rangeToMerge.Value = "Успеваемость по дисциплинам";
-                foreach (Excel.Range cell in rangeToMerge)
-                {
-                    cell.Columns.AutoFit();
-                }
+                rangeToMerge.Font.Size = 10;
+                rangeToMerge.Columns.AutoFit();
                 rangeToMerge.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                rangeToMerge.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
 
+                // предметы чето там
+                Excel.Range range = worksheet.Range[worksheet.Cells[4, 3], worksheet.Cells[4, dataGridView.Columns.Count - 3]];
+                range.Orientation = 90;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                range.Columns.AutoFit();
+                range.ColumnWidth += 2;
 
                 // Объед ячейки пропуски
                 int lastColumn = dataGridView.Columns.Count;
@@ -336,12 +351,86 @@ namespace Vedom.Menu.List
                 Excel.Range rangeToMerge2 = worksheet.Range[worksheet.Cells[3, startColumn], worksheet.Cells[3, lastColumn]];
                 rangeToMerge2.Merge();
                 rangeToMerge2.Value = "Пропуски";
-                foreach (Excel.Range cell in rangeToMerge2)
-                {
-                    cell.Columns.AutoFit();
-                }
+                rangeToMerge2.Columns.AutoFit();
                 rangeToMerge2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
+                // пропуски чето там
+                Excel.Range rangeToMerge2_1 = worksheet.Range[worksheet.Cells[4, startColumn], worksheet.Cells[4, lastColumn]];
+                rangeToMerge2_1.Orientation = 90;
+                rangeToMerge2_1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                rangeToMerge2_1.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                rangeToMerge2_1.ColumnWidth = 5;
+                // №
+                Excel.Range rangeToMerge3 = worksheet.Range["A3:A4"];
+                rangeToMerge3.Merge();
+                rangeToMerge3.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                rangeToMerge3.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+
+                // фио
+                Excel.Range rangeToMerge4 = worksheet.Range["B3:B4"];
+                rangeToMerge4.Merge();
+                rangeToMerge4.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                rangeToMerge4.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+
+                // всего часов
+                Excel.Range rangeToMerge5 = worksheet.Range[worksheet.Cells[30, 1], worksheet.Cells[30, dataGridView.Columns.Count - 3]];
+                rangeToMerge5.Merge();
+                rangeToMerge5.Value = "Всего часов";
+                rangeToMerge5.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+
+                // всего в группе
+                Excel.Range rangeToMerge6 = worksheet.Range[worksheet.Cells[32, 1], worksheet.Cells[32, 5]];
+                rangeToMerge6.Merge();
+                rangeToMerge6.Value = "Всего в группе человек";
+                Excel.Worksheet studentsSheet = workbook.Sheets["Студенты"];
+                Excel.Range fioColumn = studentsSheet.Range["B2:B26"];
+                // Получаем массив значений ячеек в столбце "ФИО"
+                object[,] fioValues = fioColumn.Value;
+                int fioCount = 0;
+                for (int i = 1; i <= fioValues.GetLength(0); i++)
+                {
+                    if (fioValues[i, 1] != null && fioValues[i, 1] != DBNull.Value && !string.IsNullOrWhiteSpace(fioValues[i, 1].ToString()))
+                    {
+                        fioCount++;
+                    }
+                }
+                worksheet.Cells[32, 6].Value = fioCount;
+
+                // колво неусп
+                Excel.Range rangeToMerge7 = worksheet.Range[worksheet.Cells[33, 1], worksheet.Cells[33, 5]];
+                rangeToMerge7.Merge();
+                rangeToMerge7.Value = "Количество неуспевающих";
+
+                // колво на 4 и 5
+                Excel.Range rangeToMerge8 = worksheet.Range[worksheet.Cells[34, 1], worksheet.Cells[34, 5]];
+                rangeToMerge8.Merge();
+                rangeToMerge8.Value = "Количество успевающих на 4 и 5";
+
+                // абс усп
+                Excel.Range rangeToMerge9 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[35, 5]];
+                rangeToMerge9.Merge();
+                rangeToMerge9.Value = "Абсолютная успеваемость в %";
+
+                // кач усп
+                Excel.Range rangeToMerge10 = worksheet.Range[worksheet.Cells[36, 1], worksheet.Cells[36, 5]];
+                rangeToMerge10.Merge();
+                rangeToMerge10.Value = "Качественная успеваемость в %";
+
+                // поогулы на 1
+                Excel.Range rangeToMerge11 = worksheet.Range[worksheet.Cells[37, 1], worksheet.Cells[37, 5]];
+                rangeToMerge11.Merge();
+                rangeToMerge11.Value = "Прогулы на 1 человека час";
+
+
+                // клас рус
+                Excel.Range rangeToMerge12 = worksheet.Range[worksheet.Cells[40, 1], worksheet.Cells[40, 6]];
+                rangeToMerge12.Merge();
+                rangeToMerge12.Value = "Классный руководитель _________________";
+
+                // староста
+                Excel.Range rangeToMerge13 = worksheet.Range[worksheet.Cells[40, 7], worksheet.Cells[40, 11]];
+                rangeToMerge13.Merge();
+                rangeToMerge13.Value = "Староста _________________";
 
                 // Запись данных
                 for (int i = 0; i < dataGridView.Rows.Count; i++)
