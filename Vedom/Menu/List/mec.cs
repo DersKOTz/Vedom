@@ -166,7 +166,7 @@ namespace Vedom.Menu.List
                             int columnIndex = FindColumnIndex(mecSheet, subject);
                             if (columnIndex != -1)
                             {
-                                row[subject] = mecSheet.Cells[i + 2, columnIndex].Value; // !1
+                                row[subject] = mecSheet.Cells[i + 3, columnIndex].Value; // !1
                             }
                         }
 
@@ -202,7 +202,7 @@ namespace Vedom.Menu.List
                 int lastColumn = sheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Column;
                 for (int j = 1; j <= lastColumn; j++)
                 {
-                    if (sheet.Cells[3, j]?.Value?.ToString() == columnName)
+                    if (sheet.Cells[4, j]?.Value?.ToString() == columnName)
                     {
                         return j;
                     }
@@ -316,8 +316,32 @@ namespace Vedom.Menu.List
 
                 for (int i = 0; i < dataGridView.Columns.Count; i++)
                 {
-                    worksheet.Cells[3, i + 1] = dataGridView.Columns[i].HeaderText;
+                    worksheet.Cells[4, i + 1] = dataGridView.Columns[i].HeaderText;
                 }
+
+                // Объединяем ячейки предметов
+                Excel.Range rangeToMerge = worksheet.Range[worksheet.Cells[3, 3], worksheet.Cells[3, dataGridView.Columns.Count - 3]];
+                rangeToMerge.Merge();
+                rangeToMerge.Value = "Успеваемость по дисциплинам";
+                foreach (Excel.Range cell in rangeToMerge)
+                {
+                    cell.Columns.AutoFit();
+                }
+                rangeToMerge.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+
+                // Объед ячейки пропуски
+                int lastColumn = dataGridView.Columns.Count;
+                int startColumn = lastColumn - 2;
+                Excel.Range rangeToMerge2 = worksheet.Range[worksheet.Cells[3, startColumn], worksheet.Cells[3, lastColumn]];
+                rangeToMerge2.Merge();
+                rangeToMerge2.Value = "Пропуски";
+                foreach (Excel.Range cell in rangeToMerge2)
+                {
+                    cell.Columns.AutoFit();
+                }
+                rangeToMerge2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
 
                 // Запись данных
                 for (int i = 0; i < dataGridView.Rows.Count; i++)
@@ -326,15 +350,16 @@ namespace Vedom.Menu.List
                     {
                         if (dataGridView.Rows[i].Cells[j].Value != null)
                         {
-                            worksheet.Cells[i + 4, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                            worksheet.Cells[i + 5, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
                         }
                         else
                         {
                             // Обработка случая, когда значение ячейки равно null
-                            worksheet.Cells[i + 4, j + 1] = ""; // Или другое значение по умолчанию
+                            worksheet.Cells[i + 5, j + 1] = ""; // Или другое значение по умолчанию
                         }
                     }
                 }
+
 
 
                 // Сохраняем изменения в файле
