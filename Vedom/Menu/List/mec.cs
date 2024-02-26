@@ -496,63 +496,57 @@ namespace Vedom.Menu.List
                 Excel.Range rangeToMerge8 = worksheet.Range[worksheet.Cells[34, 1], worksheet.Cells[34, 5]];
                 rangeToMerge8.Merge();
                 rangeToMerge8.Value = "Количество успевающих на 4 и 5";
+
+                int totalKolvo1 = 0; // Переменная для подсчета количества успевающих на оценках 4 и 5
                 foreach (Excel.Range cell in neysp)
                 {
                     if (cell.Value != null && cell.Value.ToString() != "")
                     {
                         int kolvo = 0; // Значение kolvo для текущей строки
                         Excel.Range innerRange = worksheet.Range[worksheet.Cells[cell.Row, 3], worksheet.Cells[cell.Row, dataGridView.Columns.Count - 3]];
-                        // Проверяем, что внутренний диапазон не пустой
-                        bool innerRangeEmpty = true;
+
+                        bool containsEmptyValue = false; // Флаг для обнаружения пустых значений в диапазоне
+
+                        // Проверяем, что внутренний диапазон не пустой и не содержит пустых значений
                         foreach (Excel.Range innerCell in innerRange)
                         {
-                            if (innerCell.Value != null)
+                            if (innerCell.Value == null || string.IsNullOrWhiteSpace(innerCell.Value.ToString()))
                             {
-                                innerRangeEmpty = false;
+                                containsEmptyValue = true;
                                 break;
                             }
                         }
-                        if (!innerRangeEmpty)
+
+                        // Если в диапазоне есть пустые значения, пропускаем эту строку
+                        if (containsEmptyValue)
+                            continue;
+
+                        bool containsOnlyFourAndFive = true;
+                        foreach (Excel.Range innerCell in innerRange)
                         {
-                            bool containsOnlyFourAndFive = true;
-                            foreach (Excel.Range innerCell in innerRange)
+                            if (innerCell.Value != null && !string.IsNullOrWhiteSpace(innerCell.Value.ToString()))
                             {
-                                if (innerCell.Value == null)
+                                int value;
+                                if (!int.TryParse(innerCell.Value.ToString(), out value))
                                 {
-                                    // Если значение innerCell равно null, переходим к следующей итерации цикла
-                                    continue;
+                                    containsOnlyFourAndFive = false;
+                                    break;
                                 }
 
-                                if (innerCell.Value != null && innerCell.Value.ToString() != "")
+                                if (value != 4 && value != 5)
                                 {
-                                    int value;
-                                    if (!int.TryParse(innerCell.Value.ToString(), out value))
-                                    {
-                                        containsOnlyFourAndFive = false;
-                                        break;
-                                    }
-
-                                    if (value != 4 && value != 5)
-                                    {
-                                        containsOnlyFourAndFive = false;
-                                        break;
-                                    }
+                                    containsOnlyFourAndFive = false;
+                                    break;
                                 }
-                            }
-                            if (containsOnlyFourAndFive)
-                            {
-                                kolvo = 1; // Если все значения в строке - только 4 или 5, устанавливаем kolvo в 1
                             }
                         }
-                        kolvoArray[rowIndex] = kolvo; // Сохраняем значение kolvo для текущей строки
-                        rowIndex++; // Переходим к следующей строке
+                        if (containsOnlyFourAndFive)
+                        {
+                            kolvo = 1; // Если все значения в строке - только 4 или 5, устанавливаем kolvo в 1
+                        }
+
+                        totalKolvo1 += kolvo; // Добавляем кол-во успевающих на оценках 4 и 5 в общий счетчик
                     }
-                }
-                // Складываем значения kolvo для каждой строки
-                int totalKolvo1 = 0;
-                foreach (int kolvoValue in kolvoArray)
-                {
-                    totalKolvo1 += kolvoValue;
                 }
                 worksheet.Cells[34, 6].Value = totalKolvo1;
 
@@ -561,6 +555,13 @@ namespace Vedom.Menu.List
                 Excel.Range rangeToMerge9 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[35, 5]];
                 rangeToMerge9.Merge();
                 rangeToMerge9.Value = "Абсолютная успеваемость в %";
+                object значение_ячейки_32_6 = worksheet.Cells[32, 6].Value;
+                object значение_ячейки_33_6 = worksheet.Cells[33, 6].Value;
+                if (значение_ячейки_32_6 != null && значение_ячейки_33_6 != null)
+                {
+                    float знач = Convert.ToSingle(значение_ячейки_32_6) - Convert.ToSingle(значение_ячейки_33_6);
+                    worksheet.Cells[35, 6].Value = знач / Convert.ToSingle(значение_ячейки_32_6) * 100;
+                }
 
 
                 // кач усп
@@ -568,12 +569,19 @@ namespace Vedom.Menu.List
                 rangeToMerge10.Merge();
                 rangeToMerge10.Value = "Качественная успеваемость в %";
 
+                object значение_ячейки_34_6 = worksheet.Cells[34, 6].Value;
+                if (значение_ячейки_32_6 != null && значение_ячейки_34_6 != null)
+                {
+                    Console.WriteLine(значение_ячейки_34_6);
+                    Console.WriteLine(значение_ячейки_32_6);
+                    worksheet.Cells[36, 6].Value = Convert.ToSingle(значение_ячейки_34_6) / Convert.ToSingle(значение_ячейки_32_6) * 100;
+                }
 
                 // поогулы на 1
                 Excel.Range rangeToMerge11 = worksheet.Range[worksheet.Cells[37, 1], worksheet.Cells[37, 5]];
                 rangeToMerge11.Merge();
                 rangeToMerge11.Value = "Прогулы на 1 человека час";
-
+                worksheet.Cells[37, 6].Value = Convert.ToDouble(worksheet.Cells[30, 10].Value) / Convert.ToDouble(worksheet.Cells[32, 6].Value);
 
                 //рапмки
                 Excel.Range rangeRama = worksheet.Range[worksheet.Cells[3, 1], worksheet.Cells[30, dataGridView.Columns.Count]];
