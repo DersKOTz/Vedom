@@ -30,6 +30,8 @@
         {
             this.menu = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
             this.sem = new System.Windows.Forms.Button();
             this.panel7 = new System.Windows.Forms.Panel();
@@ -41,8 +43,10 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.student = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.home = new System.Windows.Forms.Button();
             this.content = new System.Windows.Forms.Panel();
             this.close = new System.Windows.Forms.PictureBox();
+            this.pictureBox8 = new System.Windows.Forms.PictureBox();
             this.pictureBox7 = new System.Windows.Forms.PictureBox();
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
@@ -50,9 +54,9 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.home = new System.Windows.Forms.Button();
             this.menu.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.panel8.SuspendLayout();
             this.panel7.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -60,6 +64,7 @@
             this.panel4.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.close)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
@@ -82,6 +87,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.panel1);
             this.panel3.Controls.Add(this.panel8);
             this.panel3.Controls.Add(this.panel7);
             this.panel3.Controls.Add(this.panel6);
@@ -90,8 +96,32 @@
             this.panel3.Controls.Add(this.panel2);
             this.panel3.Location = new System.Drawing.Point(0, 172);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(203, 290);
+            this.panel3.Size = new System.Drawing.Size(203, 335);
             this.panel3.TabIndex = 2;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.pictureBox8);
+            this.panel1.Controls.Add(this.button1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 282);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(203, 47);
+            this.panel1.TabIndex = 7;
+            // 
+            // button1
+            // 
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(47, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(161, 33);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Открыть Excel";
+            this.button1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // panel8
             // 
@@ -223,6 +253,20 @@
             this.panel2.Size = new System.Drawing.Size(203, 47);
             this.panel2.TabIndex = 1;
             // 
+            // home
+            // 
+            this.home.FlatAppearance.BorderSize = 0;
+            this.home.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.home.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.home.Location = new System.Drawing.Point(47, 3);
+            this.home.Name = "home";
+            this.home.Size = new System.Drawing.Size(161, 33);
+            this.home.TabIndex = 0;
+            this.home.Text = "Главная";
+            this.home.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.home.UseVisualStyleBackColor = true;
+            this.home.Click += new System.EventHandler(this.home_Click);
+            // 
             // content
             // 
             this.content.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
@@ -243,6 +287,16 @@
             this.close.Click += new System.EventHandler(this.close_Click);
             this.close.MouseEnter += new System.EventHandler(this.close_MouseEnter);
             this.close.MouseLeave += new System.EventHandler(this.close_MouseLeave);
+            // 
+            // pictureBox8
+            // 
+            this.pictureBox8.Image = global::Vedom.Properties.Resources.free_icon_excel_732066;
+            this.pictureBox8.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox8.Name = "pictureBox8";
+            this.pictureBox8.Size = new System.Drawing.Size(38, 33);
+            this.pictureBox8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox8.TabIndex = 1;
+            this.pictureBox8.TabStop = false;
             // 
             // pictureBox7
             // 
@@ -312,20 +366,6 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
-            // home
-            // 
-            this.home.FlatAppearance.BorderSize = 0;
-            this.home.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.home.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.home.Location = new System.Drawing.Point(47, 3);
-            this.home.Name = "home";
-            this.home.Size = new System.Drawing.Size(161, 33);
-            this.home.TabIndex = 0;
-            this.home.Text = "Главная";
-            this.home.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.home.UseVisualStyleBackColor = true;
-            this.home.Click += new System.EventHandler(this.home_Click);
-            // 
             // formMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -344,6 +384,7 @@
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.formMain_MouseUp);
             this.menu.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
             this.panel8.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
@@ -351,6 +392,7 @@
             this.panel4.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.close)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).EndInit();
@@ -387,5 +429,8 @@
         private System.Windows.Forms.PictureBox close;
         private System.Windows.Forms.Panel content;
         private System.Windows.Forms.Button home;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.PictureBox pictureBox8;
+        private System.Windows.Forms.Button button1;
     }
 }

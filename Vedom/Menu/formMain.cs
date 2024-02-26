@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -119,6 +120,10 @@ namespace Vedom.Menu
             close.Image = Vedom.Properties.Resources.free_icon_delete_cross_63694;
         }
 
-
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string filePath = "vedom.xlsx";
+            Process.Start(filePath);
+        }
     }
 }

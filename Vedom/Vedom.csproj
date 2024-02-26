@@ -247,5 +247,14 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-open-folder-5082617.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-excel-732220.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-excel-732066.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

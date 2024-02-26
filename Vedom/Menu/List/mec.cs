@@ -497,7 +497,7 @@ namespace Vedom.Menu.List
                 rangeToMerge8.Merge();
                 rangeToMerge8.Value = "Количество успевающих на 4 и 5";
 
-                int totalKolvo1 = 0; // Переменная для подсчета количества успевающих на оценках 4 и 5
+                int totalKolvo1 = 0; // Переменная для подсчета количества успевающих на оценках 4, 5 и "+"
                 foreach (Excel.Range cell in neysp)
                 {
                     if (cell.Value != null && cell.Value.ToString() != "")
@@ -521,31 +521,25 @@ namespace Vedom.Menu.List
                         if (containsEmptyValue)
                             continue;
 
-                        bool containsOnlyFourAndFive = true;
+                        bool containsOnlyFourFiveAndPlus = true;
                         foreach (Excel.Range innerCell in innerRange)
                         {
                             if (innerCell.Value != null && !string.IsNullOrWhiteSpace(innerCell.Value.ToString()))
                             {
-                                int value;
-                                if (!int.TryParse(innerCell.Value.ToString(), out value))
+                                string valueStr = innerCell.Value.ToString();
+                                if (valueStr != "4" && valueStr != "5" && valueStr != "+")
                                 {
-                                    containsOnlyFourAndFive = false;
-                                    break;
-                                }
-
-                                if (value != 4 && value != 5)
-                                {
-                                    containsOnlyFourAndFive = false;
+                                    containsOnlyFourFiveAndPlus = false;
                                     break;
                                 }
                             }
                         }
-                        if (containsOnlyFourAndFive)
+                        if (containsOnlyFourFiveAndPlus)
                         {
-                            kolvo = 1; // Если все значения в строке - только 4 или 5, устанавливаем kolvo в 1
+                            kolvo = 1; // Если все значения в строке - только 4, 5 или "+", устанавливаем kolvo в 1
                         }
 
-                        totalKolvo1 += kolvo; // Добавляем кол-во успевающих на оценках 4 и 5 в общий счетчик
+                        totalKolvo1 += kolvo; // Добавляем кол-во успевающих на оценках 4, 5 и "+" в общий счетчик
                     }
                 }
                 worksheet.Cells[34, 6].Value = totalKolvo1;

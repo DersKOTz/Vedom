@@ -103,6 +103,26 @@ namespace Vedom.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap free_icon_excel_732066 {
+            get {
+                object obj = ResourceManager.GetObject("free-icon-excel-732066", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap free_icon_excel_732220 {
+            get {
+                object obj = ResourceManager.GetObject("free-icon-excel-732220", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap free_icon_home_1946436 {
             get {
                 object obj = ResourceManager.GetObject("free-icon-home-1946436", resourceCulture);
@@ -116,6 +136,16 @@ namespace Vedom.Properties {
         internal static System.Drawing.Bitmap free_icon_month_5296802 {
             get {
                 object obj = ResourceManager.GetObject("free-icon-month-5296802", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap free_icon_open_folder_5082617 {
+            get {
+                object obj = ResourceManager.GetObject("free-icon-open-folder-5082617", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
