@@ -70,7 +70,6 @@ namespace Vedom.Menu.List
             {
                 Excel.Worksheet studentsSheet = null;
                 Excel.Worksheet disciplinesSheet = null;
-                Excel.Worksheet attendanceSheet = null;
 
                 // Проверка наличия листа студентов
                 if (!WorksheetExists(workbook, studentsSheetName))
@@ -107,13 +106,24 @@ namespace Vedom.Menu.List
                 disciplinesSheet = workbook.Sheets["Дисциплины"];
 
                 // Добавление столбцов для каждого предмета с текущим семестром
+                // Добавление столбцов для каждого предмета с текущим семестром
                 for (int i = 2; i <= disciplinesSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
                 {
-                    string subjectName = disciplinesSheet.Cells[i, 2].Value?.ToString(); // Получаем название предмета из листа "Дисциплины"
+                    string subjectName = disciplinesSheet.Cells[i, 2].Value?.ToString(); // Получаем название предмета из второго столбца
+                    string secondLine = disciplinesSheet.Cells[i, 3].Value?.ToString(); // Получаем значение для второй строки из третьего столбца
+                    string thirdLine = disciplinesSheet.Cells[i, 4].Value?.ToString(); // Получаем значение для третьей строки из четвёртого столбца
+
                     int semester = Convert.ToInt32(disciplinesSheet.Cells[i, 1].Value); // Получаем номер семестра
                     if (!string.IsNullOrEmpty(subjectName) && semester == currentSemester)
-                        dt.Columns.Add(subjectName); // Добавляем столбец с названием предмета в таблицу данных только если семестр равен текущему
+                    {
+                        // Создаем двустрочный заголовок
+                        string columnHeader = $"{secondLine}\n{thirdLine}\n{subjectName}";
+
+                        // Добавляем столбец с двустрочным заголовком в таблицу данных только если семестр равен текущему
+                        dt.Columns.Add(columnHeader);
+                    }
                 }
+
 
                 dt.Columns.Add("Всего");
                 dt.Columns.Add("Уваж.");
@@ -279,15 +289,21 @@ namespace Vedom.Menu.List
                     workbook.Save(); // Сохраняем изменения в файле
                 }
 
-            
 
 
-                
+
+
                 int startRow = 7;
                 for (int i = 0; i < dataGridView.Columns.Count; i++)
                 {
-                    worksheet.Cells[startRow - 1, i + 1] = dataGridView.Columns[i].HeaderText;
+                    string[] headerLines = dataGridView.Columns[i].HeaderText.Split('\n'); // Разбиваем двухстрочный заголовок на отдельные строки
+
+                    for (int j = 0; j < headerLines.Length; j++)
+                    {
+                        worksheet.Cells[startRow + j - 3, i + 1] = headerLines[j]; // Записываем каждую строку заголовка в отдельную ячейку
+                    }
                 }
+
 
                 // Запись данных
                 for (int i = 0; i < dataGridView.Rows.Count; i++)
@@ -297,7 +313,7 @@ namespace Vedom.Menu.List
                         worksheet.Cells[i + startRow + 1, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
                     }
                 }
-                
+
 
 
                 // 1 2 3 и тд
@@ -308,6 +324,7 @@ namespace Vedom.Menu.List
                 {
                     range1.Cells[1, i].Value = i;
                 }
+
 
                 // пропуски объед
                 /*
