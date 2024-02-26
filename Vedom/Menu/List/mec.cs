@@ -414,6 +414,7 @@ namespace Vedom.Menu.List
                 rangeToMerge13.Merge();
                 rangeToMerge13.Value = "Староста _________________";
 
+
                 // Запись данных
                 for (int i = 0; i < dataGridView.Rows.Count; i++)
                 {
@@ -430,6 +431,7 @@ namespace Vedom.Menu.List
                         }
                     }
                 }
+
                 // запись всего часов
                 int v = 0;
                 int y = 0;

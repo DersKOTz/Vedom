@@ -208,96 +208,7 @@ namespace Vedom.Menu.List
             ExportToExcel(dataGridView1, fileName);
         }
 
-        /* это крч с 4 строки
-        private void ExportToExcel(DataGridView dataGridView, string fileName)
-        {
-            string studentsSheetName = "студенты"; // исправлено
-            Excel.Application excelApp = new Excel.Application();
-            Excel.Workbook workbook = null;
 
-            try
-            {
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-
-                if (!File.Exists(filePath))
-                {
-                    workbook = excelApp.Workbooks.Add();
-                    workbook.SaveAs(filePath);
-                }
-                else
-                {
-                    workbook = excelApp.Workbooks.Open(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
-            }
-
-            if (workbook != null)
-            {
-                Excel.Worksheet worksheet = null;
-
-                // Формируем название листа по месяцу и году
-                string monthYearSheetName = "Ведомость семестр №" + Properties.Settings.Default.semsestSave;
-
-                // Проверяем существует ли лист для текущего месяца и года
-                bool monthYearSheetExists = false;
-                foreach (Excel.Worksheet sheet in workbook.Sheets)
-                {
-                    if (sheet.Name == monthYearSheetName)
-                    {
-                        worksheet = sheet;
-                        monthYearSheetExists = true;
-                        break;
-                    }
-                }
-
-                if (!monthYearSheetExists)
-                {
-                    worksheet = workbook.Sheets.Add();
-                    worksheet.Name = monthYearSheetName;
-                    workbook.Save(); // Сохраняем изменения в файле
-                }
-                else
-                {
-                    // Если лист для текущего месяца и года существует, устанавливаем его в качестве worksheet
-                    worksheet = workbook.Sheets[monthYearSheetName];
-                }
-
-                // Если лист "прогулы" не существует, создаем его
-                if (worksheet == null)
-                {
-                    worksheet = workbook.Sheets.Add();
-                    worksheet.Name = studentsSheetName;
-                    workbook.Save(); // Сохраняем изменения в файле
-                }
-
-                for (int i = 0; i < dataGridView.Columns.Count; i++)
-                {
-                    worksheet.Cells[4, i + 1] = dataGridView.Columns[i].HeaderText;
-                }
-
-                // Запись данных
-                for (int i = 0; i < dataGridView.Rows.Count; i++)
-                {
-                    for (int j = 0; j < dataGridView.Columns.Count; j++)
-                    {
-                        worksheet.Cells[i + 5, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
-                    }
-                }
-
-
-                // Сохраняем изменения в файле
-                workbook.Save();
-                workbook.Close();
-                excelApp.Quit();
-                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
-
-                MessageBox.Show("Данные сохранены в Excel файл!");
-            }
-        }
-        */
 
         private void ExportToExcel(DataGridView dataGridView, string fileName)
         {
@@ -353,6 +264,11 @@ namespace Vedom.Menu.List
                 {
                     // Если лист для текущего месяца и года существует, устанавливаем его в качестве worksheet
                     worksheet = workbook.Sheets[monthYearSheetName];
+                    // Удаление содержимого
+                    worksheet.Cells.ClearContents();
+
+                    // Удаление форматирования
+                    worksheet.Cells.ClearFormats();
                 }
 
                 // Если лист "прогулы" не существует, создаем его
@@ -363,9 +279,14 @@ namespace Vedom.Menu.List
                     workbook.Save(); // Сохраняем изменения в файле
                 }
 
+            
+
+
+                
+                int startRow = 7;
                 for (int i = 0; i < dataGridView.Columns.Count; i++)
                 {
-                    worksheet.Cells[1, i + 1] = dataGridView.Columns[i].HeaderText;
+                    worksheet.Cells[startRow - 1, i + 1] = dataGridView.Columns[i].HeaderText;
                 }
 
                 // Запись данных
@@ -373,9 +294,32 @@ namespace Vedom.Menu.List
                 {
                     for (int j = 0; j < dataGridView.Columns.Count; j++)
                     {
-                        worksheet.Cells[i + 2, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                        worksheet.Cells[i + startRow + 1, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
                     }
                 }
+                
+
+
+                // 1 2 3 и тд
+                worksheet.Cells[6, 2].Value = "Дисциплины";
+                int columnCount = dataGridView.Columns.Count;
+                Excel.Range range1 = worksheet.Range[worksheet.Cells[7, 1], worksheet.Cells[7, columnCount]];
+                for (int i = 1; i <= columnCount; i++)
+                {
+                    range1.Cells[1, i].Value = i;
+                }
+
+                // пропуски объед
+                /*
+                int lastColumn = dataGridView.Columns.Count;
+                int startColumn = lastColumn - 2;
+                Excel.Range rangeToMerge2 = worksheet.Range[worksheet.Cells[6, startColumn], worksheet.Cells[6, lastColumn]];
+                rangeToMerge2.Merge();
+                rangeToMerge2.Value = "Пропуски";
+                rangeToMerge2.Columns.AutoFit();
+                rangeToMerge2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                */
+
 
 
                 // Сохраняем изменения в файле
