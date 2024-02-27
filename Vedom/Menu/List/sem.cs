@@ -181,73 +181,44 @@ namespace Vedom.Menu.List
                         sheets[month - 1] = sheet;
                     }
 
-                    double[] valuesFromSheets = new double[12];
-                    double[] valuesFromSheets2 = new double[12];
-                    double[] valuesFromSheets3 = new double[12];
+                    // Создаем списки для хранения значений
+                    List<double> totalValues = new List<double>();
+                    List<double> respectfulValues = new List<double>();
+                    List<double> disrespectfulValues = new List<double>();
+
+                    // Проходим по каждому месяцу
                     for (int month = 1; month <= 12; month++)
                     {
-                        // Получить значение из соответствующей ячейки на листе для текущего месяца
+                        // Получаем значения из соответствующих ячеек
                         object cellValue = sheets[month - 1].Cells[i, 34].Value;
                         object cellValue2 = sheets[month - 1].Cells[i, 35].Value;
                         object cellValue3 = sheets[month - 1].Cells[i, 36].Value;
-                        // Console.WriteLine("Значение в ячейке " + month + ": " + (cellValue != null ? cellValue.ToString() : "пусто"));
 
-                        // Проверить, что значение не равно null
+                        // Проверяем, что значения не равны null и являются double
                         if (cellValue != null && cellValue is double)
                         {
-                            // Преобразовать значение в double и сохранить в массиве
-                            valuesFromSheets[month - 1] = (double)cellValue;
-                        }
-                        else
-                        {
-                            // Обработка случая, когда значение ячейки не является double или равно null
-                            // Например, можно использовать значение по умолчанию или выполнить другие действия
-                            valuesFromSheets[month - 1] = 0; // значение по умолчанию
+                            totalValues.Add((double)cellValue);
                         }
                         if (cellValue2 != null && cellValue2 is double)
                         {
-                            // Преобразовать значение в double и сохранить в массиве
-                            valuesFromSheets2[month - 1] = (double)cellValue2;
-                        }
-                        else
-                        {
-                            // Обработка случая, когда значение ячейки не является double или равно null
-                            // Например, можно использовать значение по умолчанию или выполнить другие действия
-                            valuesFromSheets2[month - 1] = 0; // значение по умолчанию
+                            respectfulValues.Add((double)cellValue2);
                         }
                         if (cellValue3 != null && cellValue3 is double)
                         {
-                            // Преобразовать значение в double и сохранить в массиве
-                            valuesFromSheets3[month - 1] = (double)cellValue3;
-                        }
-                        else
-                        {
-                            // Обработка случая, когда значение ячейки не является double или равно null
-                            // Например, можно использовать значение по умолчанию или выполнить другие действия
-                            valuesFromSheets3[month - 1] = 0; // значение по умолчанию
+                            disrespectfulValues.Add((double)cellValue3);
                         }
                     }
 
-                    double sum = 0;
-                    for (int month = 0; month < 12; month++)
-                    {
-                        sum += valuesFromSheets[month];
-                    }
-                    row["Всего"] = sum;
+                    // Вычисляем суммы значений
+                    double totalSum = totalValues.Sum();
+                    double respectfulSum = respectfulValues.Sum();
+                    double disrespectfulSum = disrespectfulValues.Sum();
 
-                    double sum2 = 0;
-                    for (int month = 0; month < 12; month++)
-                    {
-                        sum2 += valuesFromSheets2[month];
-                    }
-                    row["Уваж."] = sum2;
+                    // Присваиваем суммы соответствующим столбцам
+                    row["Всего"] = totalSum;
+                    row["Уваж."] = respectfulSum;
+                    row["Неуваж."] = disrespectfulSum;
 
-                    double sum3 = 0;
-                    for (int month = 0; month < 12; month++)
-                    {
-                        sum3 += valuesFromSheets3[month];
-                    }
-                    row["Неуваж."] = sum3;
 
 
                     dt.Rows.Add(row);
@@ -265,6 +236,7 @@ namespace Vedom.Menu.List
                         sheet.Delete();
                     }
                 }
+
 
 
                 workbook.Save();
@@ -426,7 +398,7 @@ namespace Vedom.Menu.List
                 }
 
 
-
+                // загрузка заголовков
                 int startRow = 7;
                 for (int i = 0; i < dataGridView.Columns.Count; i++)
                 {
@@ -456,7 +428,23 @@ namespace Vedom.Menu.List
                         worksheet.Cells[i + startRow + 1, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
                     }
                 }
+                // 11 32
+                for (int i = 11; i <= 32; i++)
+                {
+                    Excel.Range cellB4 = worksheet.Cells[i, 2]; // 4 - номер строки, 2 - номер столбца (B)
+                    object cellValue = cellB4.Value;
 
+                    // Проверка, является ли ячейка B4 пустой
+                    if (cellValue == null || string.IsNullOrEmpty(cellValue.ToString()))
+                    {
+                        // Ваш код, выполняемый, если ячейка B4 пуста
+                        int lastColumn = dataGridView1.Columns.Count;
+                        int startColumn = lastColumn - 2;
+                        Excel.Range rangeToMerge2 = worksheet.Range[worksheet.Cells[i, startColumn], worksheet.Cells[i, lastColumn]];
+                        rangeToMerge2.Value = "";
+                        // Далее ваше действие с rangeToMerge2, если ячейка B4 пуста
+                    }
+                }
 
 
                 // хз
@@ -474,16 +462,61 @@ namespace Vedom.Menu.List
                 }
 
 
-                // пропуски объед
-                /*
-                int lastColumn = dataGridView.Columns.Count;
-                int startColumn = lastColumn - 2;
-                Excel.Range rangeToMerge2 = worksheet.Range[worksheet.Cells[6, startColumn], worksheet.Cells[6, lastColumn]];
-                rangeToMerge2.Merge();
-                rangeToMerge2.Value = "Пропуски";
-                rangeToMerge2.Columns.AutoFit();
-                rangeToMerge2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                */
+                // всего в группе
+                Excel.Range rangeToMerge6 = worksheet.Range[worksheet.Cells[34, 1], worksheet.Cells[34, 3]];
+                rangeToMerge6.Merge();
+                rangeToMerge6.Value = "Всего в группе человек";
+                Excel.Worksheet studentsSheet = workbook.Sheets["Студенты"];
+                Excel.Range fioColumn = studentsSheet.Range["B2:B26"];
+
+                // Получаем массив значений ячеек в столбце "ФИО"
+                object[,] fioValues = fioColumn.Value;
+                int fioCount = 0;
+                for (int i = 1; i <= fioValues.GetLength(0); i++)
+                {
+                    if (fioValues[i, 1] != null && fioValues[i, 1] != DBNull.Value && !string.IsNullOrWhiteSpace(fioValues[i, 1].ToString()))
+                    {
+                        fioCount++;
+                    }
+                }
+                worksheet.Cells[34, 4].Value = fioCount;
+
+                // колво неусп
+                Excel.Range rangeToMerge7 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[35, 3]];
+                rangeToMerge7.Merge();
+                rangeToMerge7.Value = "Количество неуспевающих";
+                int[] kolvoArray = new int[25]; // Создаем массив для хранения значений kolvo для каждой строки
+                Excel.Range neysp = worksheet.Range[worksheet.Cells[8, 2], worksheet.Cells[32, 2]]; // Используем строки с 5 по 29
+                int rowIndex = 0; // Индекс текущей строки в массиве kolvoArray
+                foreach (Excel.Range cell in neysp)
+                {
+                    if (cell.Value != null && cell.Value.ToString() != "")
+                    {
+                        int kolvo = 0; // Значение kolvo для текущей строки
+
+                        Excel.Range innerRange = worksheet.Range[worksheet.Cells[cell.Row, 3], worksheet.Cells[cell.Row, dataGridView.Columns.Count - 3]];
+                        foreach (Excel.Range innerCell in innerRange)
+                        {
+                            if (innerCell.Value == null || innerCell.Value.ToString() == "2")
+                            {
+                                kolvo = 1; // Если найдена двойка или ячейка пуста, устанавливаем kolvo в 1
+                                break; // Прерываем цикл, так как условие уже выполнено
+                            }
+                        }
+                        kolvoArray[rowIndex] = kolvo; // Сохраняем значение kolvo для текущей строки
+                        rowIndex++; // Переходим к следующей строке
+                    }
+                }
+                int totalKolvo = 0;
+                foreach (int kolvoValue in kolvoArray)
+                {
+                    totalKolvo += kolvoValue;
+                }
+                worksheet.Cells[35, 4].Value = totalKolvo;
+
+                Array.Clear(kolvoArray, 0, kolvoArray.Length);
+                rowIndex = 0;
+
 
 
 
