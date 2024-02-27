@@ -34,7 +34,7 @@ namespace Vedom.Menu.List
         {
             string fileName = "vedom.xlsx";
             string studentsSheetName = "студенты";
-            string attendanceSheetName = "Прогулы " + selectedMonthYear;
+            string attendanceSheetName = "Прогулы " + selectedMonthYear + " " + Properties.Settings.Default.semsestSave;
             Excel.Application excelApp = new Excel.Application();
             Excel.Workbook workbook = null;
 
@@ -152,7 +152,7 @@ namespace Vedom.Menu.List
         private void save_Click(object sender, EventArgs e)
         {
             string fileName = "vedom.xlsx";
-            string studentsSheetName = "прогулы"; // объявляем и инициализируем переменную studentsSheetName здесь
+            string studentsSheetName = "прогулы" + " " + Properties.Settings.Default.semsestSave; // объявляем и инициализируем переменную studentsSheetName здесь
             Excel.Application excelApp = new Excel.Application();
             Excel.Workbook workbook = null;
 
@@ -186,7 +186,7 @@ namespace Vedom.Menu.List
                 DateTime selectedDate = dateTimePicker1.Value;
 
                 // Формируем название листа по месяцу и году
-                string monthYearSheetName = "Прогулы " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
+                string monthYearSheetName = "Прогулы " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU")) + " " + Properties.Settings.Default.semsestSave;
 
                 // Проверяем существует ли лист для текущего месяца и года
                 bool monthYearSheetExists = false;
