@@ -13,6 +13,7 @@ using System.Globalization;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Vedom.Menu.List
 {
@@ -453,6 +454,7 @@ namespace Vedom.Menu.List
                 worksheet.Cells[5, 2].ColumnWidth = 23;
                 worksheet.Cells[5, 1].Value = "№";
                 worksheet.Cells[6, 1].Value = "";
+
                 // 1 2 3 и тд
                 int columnCount = dataGridView.Columns.Count;
                 Excel.Range range1 = worksheet.Range[worksheet.Cells[7, 1], worksheet.Cells[7, columnCount]];
@@ -460,10 +462,36 @@ namespace Vedom.Menu.List
                 {
                     range1.Cells[1, i].Value = i;
                 }
+                range1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+                // всего часов
+                Excel.Range rangeToMerge5 = worksheet.Range[worksheet.Cells[33, 1], worksheet.Cells[33, dataGridView.Columns.Count - 3]];
+                rangeToMerge5.Merge();
+                rangeToMerge5.Value = "Всего пропусков (час)";
+                rangeToMerge5.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
+
+                // часы
+                int v = 0;
+                int y = 0;
+                int n = 0;
+                int lastColumn1 = dataGridView.Columns.Count;
+                int startColumn1 = lastColumn1 - 2;
+                for (int row = 8; row <= 32; row++)
+                {
+                    v += Convert.ToInt32(worksheet.Cells[row, startColumn1].Value);
+                    y += Convert.ToInt32(worksheet.Cells[row, startColumn1 + 1].Value);
+                    n += Convert.ToInt32(worksheet.Cells[row, startColumn1 + 2].Value);
+                }
+                worksheet.Cells[33, startColumn1].Value = v;
+                worksheet.Cells[33, startColumn1 + 1].Value = y;
+                worksheet.Cells[33, startColumn1 + 2].Value = n;
+
+
+
 
 
                 // всего в группе
-                Excel.Range rangeToMerge6 = worksheet.Range[worksheet.Cells[34, 1], worksheet.Cells[34, 3]];
+                Excel.Range rangeToMerge6 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[35, 3]];
                 rangeToMerge6.Merge();
                 rangeToMerge6.Value = "Всего в группе человек";
                 Excel.Worksheet studentsSheet = workbook.Sheets["Студенты"];
@@ -479,10 +507,11 @@ namespace Vedom.Menu.List
                         fioCount++;
                     }
                 }
-                worksheet.Cells[34, 4].Value = fioCount;
+                worksheet.Cells[35, 4].Value = fioCount;
+
 
                 // колво неусп
-                Excel.Range rangeToMerge7 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[35, 3]];
+                Excel.Range rangeToMerge7 = worksheet.Range[worksheet.Cells[36, 1], worksheet.Cells[36, 3]];
                 rangeToMerge7.Merge();
                 rangeToMerge7.Value = "Количество неуспевающих";
                 int[] kolvoArray = new int[25]; // Создаем массив для хранения значений kolvo для каждой строки
@@ -512,13 +541,223 @@ namespace Vedom.Menu.List
                 {
                     totalKolvo += kolvoValue;
                 }
-                worksheet.Cells[35, 4].Value = totalKolvo;
+                worksheet.Cells[36, 4].Value = totalKolvo;
 
                 Array.Clear(kolvoArray, 0, kolvoArray.Length);
                 rowIndex = 0;
 
 
+                // колво на 4 и 5
+                Excel.Range rangeToMerge8 = worksheet.Range[worksheet.Cells[37, 1], worksheet.Cells[37, 3]];
+                rangeToMerge8.Merge();
+                rangeToMerge8.Value = "Количество успевающих на 4 и 5";
 
+                int totalKolvo1 = 0; // Переменная для подсчета количества успевающих на оценках 4, 5 и "+"
+                foreach (Excel.Range cell in neysp)
+                {
+                    if (cell.Value != null && cell.Value.ToString() != "")
+                    {
+                        int kolvo = 0; // Значение kolvo для текущей строки
+                        Excel.Range innerRange = worksheet.Range[worksheet.Cells[cell.Row, 3], worksheet.Cells[cell.Row, dataGridView.Columns.Count - 3]];
+
+                        bool containsEmptyValue = false; // Флаг для обнаружения пустых значений в диапазоне
+
+                        // Проверяем, что внутренний диапазон не пустой и не содержит пустых значений
+                        foreach (Excel.Range innerCell in innerRange)
+                        {
+                            if (innerCell.Value == null || string.IsNullOrWhiteSpace(innerCell.Value.ToString()))
+                            {
+                                containsEmptyValue = true;
+                                break;
+                            }
+                        }
+
+                        // Если в диапазоне есть пустые значения, пропускаем эту строку
+                        if (containsEmptyValue)
+                            continue;
+
+                        bool containsOnlyFourFiveAndPlus = true;
+                        foreach (Excel.Range innerCell in innerRange)
+                        {
+                            if (innerCell.Value != null && !string.IsNullOrWhiteSpace(innerCell.Value.ToString()))
+                            {
+                                string valueStr = innerCell.Value.ToString();
+                                if (valueStr != "4" && valueStr != "5" && valueStr != "зач")
+                                {
+                                    containsOnlyFourFiveAndPlus = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (containsOnlyFourFiveAndPlus)
+                        {
+                            kolvo = 1; // Если все значения в строке - только 4, 5 или "+", устанавливаем kolvo в 1
+                        }
+
+                        totalKolvo1 += kolvo; // Добавляем кол-во успевающих на оценках 4, 5 и "+" в общий счетчик
+                    }
+                }
+                worksheet.Cells[37, 4].Value = totalKolvo1;
+
+
+                // абс усп
+                Excel.Range rangeToMerge9 = worksheet.Range[worksheet.Cells[38, 1], worksheet.Cells[38, 3]];
+                rangeToMerge9.Merge();
+                rangeToMerge9.Value = "Абсолютная успеваемость в %";
+                object значение_ячейки_32_6 = worksheet.Cells[35, 4].Value;
+                object значение_ячейки_33_6 = worksheet.Cells[36, 4].Value;
+                if (значение_ячейки_32_6 != null && значение_ячейки_33_6 != null)
+                {
+                    float знач = Convert.ToSingle(значение_ячейки_32_6) - Convert.ToSingle(значение_ячейки_33_6);
+                    worksheet.Cells[38, 4].Value = Math.Round(знач / Convert.ToSingle(значение_ячейки_32_6) * 100, 1);
+                }
+
+
+                // кач усп
+                Excel.Range rangeToMerge10 = worksheet.Range[worksheet.Cells[39, 1], worksheet.Cells[39, 3]];
+                rangeToMerge10.Merge();
+                rangeToMerge10.Value = "Качественная успеваемость в %";
+
+                object значение_ячейки_34_6 = worksheet.Cells[37, 4].Value;
+                if (значение_ячейки_32_6 != null && значение_ячейки_34_6 != null)
+                {
+                    worksheet.Cells[39, 4].Value = Math.Round(Convert.ToSingle(значение_ячейки_34_6) / Convert.ToSingle(значение_ячейки_32_6) * 100, 1);
+                }
+
+
+                // поогулы на 1
+                Excel.Range rangeToMerge11 = worksheet.Range[worksheet.Cells[40, 1], worksheet.Cells[40, 3]];
+                rangeToMerge11.Merge();
+                rangeToMerge11.Value = "Прогулы на 1 человека час";
+                worksheet.Cells[40, 4].Value = Math.Round(Convert.ToDouble(worksheet.Cells[33, startColumn1 + 2].Value) / Convert.ToDouble(worksheet.Cells[35, 4].Value), 1);
+
+
+                // предметы чето там
+                Excel.Range range = worksheet.Range[worksheet.Cells[5, 3], worksheet.Cells[6, dataGridView.Columns.Count - 3]];
+                range.Orientation = 90;
+                range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                range.Columns.AutoFit();
+                range.ColumnWidth += 2;
+
+                // объед пропусков
+                Excel.Range range11 = worksheet.Range[worksheet.Cells[5, dataGridView.Columns.Count - 2], worksheet.Cells[6, dataGridView.Columns.Count - 2]];
+                Excel.Range range12 = worksheet.Range[worksheet.Cells[5, dataGridView.Columns.Count - 1], worksheet.Cells[6, dataGridView.Columns.Count - 1]];
+                Excel.Range range13 = worksheet.Range[worksheet.Cells[5, dataGridView.Columns.Count], worksheet.Cells[6, dataGridView.Columns.Count]];
+                Excel.Range range14 = worksheet.Range[worksheet.Cells[4, dataGridView.Columns.Count - 2], worksheet.Cells[4, dataGridView.Columns.Count]];
+                range11.Merge();
+                range12.Merge();
+                range13.Merge();
+                range14.Merge();
+                range14.Value = "Пропуски (час)";
+                range11.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range11.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                range12.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range12.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                range13.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range13.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                range14.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range14.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+
+                // предметы UI
+                Excel.Range range15 = worksheet.Range[worksheet.Cells[6, 3], worksheet.Cells[6, dataGridView.Columns.Count - 3]];
+                range15.WrapText = true;
+                range15.RowHeight = 110;
+                range15.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                range15.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                range15.Columns.AutoFit();
+                range15.ColumnWidth += 2;
+
+
+                int endColumn = dataGridView.Columns.Count - 3; // Конечная колонка, где заканчивается поиск
+                int currentColumn;
+                void MergeCells(string valueToFind)
+                {
+                    currentColumn = 3;
+                    while (currentColumn <= endColumn)
+                    {
+                        Excel.Range cell = worksheet.Cells[4, currentColumn];
+                        if (cell.Value != null && cell.Value.ToString() == valueToFind)
+                        {
+                            // Начало объединяемого диапазона
+                            Excel.Range mergeRange = cell;
+
+                            // Ищем конец объединяемого диапазона
+                            int nextColumn = currentColumn + 1;
+                            while (nextColumn <= endColumn && worksheet.Cells[4, nextColumn].Value != null && worksheet.Cells[4, nextColumn].Value.ToString() == valueToFind)
+                            {
+                                nextColumn++;
+                            }
+                            // Конец объединяемого диапазона
+                            Excel.Range endCell = worksheet.Cells[4, nextColumn - 1];
+
+                            Excel.Range clearRange = worksheet.Range[mergeRange, endCell];
+                            clearRange.ClearContents();
+
+                            // Объединяем диапазон
+                            Excel.Range mergeRangeTotal = worksheet.Range[mergeRange, endCell];
+                            mergeRangeTotal.Merge();
+                            if (valueToFind == "Экзамен")
+                            {
+                                mergeRangeTotal.Value = "Экзаменационные\nдисциплины";
+                            }
+                            else if (valueToFind == "Зачет")
+                            {
+                                mergeRangeTotal.Value = "Зачётные\nдисциплины";
+                            }
+                            else if (valueToFind == "Курсовой проект")
+                            {
+                                mergeRangeTotal.Value = "Курсовой\nпроект";
+                            }
+                            else if (valueToFind == "Практика")
+                            {
+                                mergeRangeTotal.Value = "Практики";
+                            }
+                            mergeRangeTotal.RowHeight = 34;
+                            mergeRangeTotal.ColumnWidth = 9;
+
+                            mergeRangeTotal.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                            mergeRangeTotal.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                            // Переходим к следующей ячейке
+                            currentColumn = nextColumn;
+                        }
+                        else
+                        {
+                            // Переходим к следующей ячейке
+                            currentColumn++;
+                        }
+                    }
+                }
+                MergeCells("Экзамен"); // объединение ячеек для "Экзамен"
+                MergeCells("Зачет"); // объединение ячеек для "зачет"
+
+
+                Excel.Range r1 = worksheet.Range[worksheet.Cells[5, 1], worksheet.Cells[6, 2]];
+                r1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                r1.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+
+                Excel.Range rangeToMerge13 = worksheet.Range[worksheet.Cells[1, 2], worksheet.Cells[1, 8]];
+                rangeToMerge13.Merge();
+                rangeToMerge13.Value = "СВОДНАЯ ВЕДОМОСТЬ УСПЕВАЕМОСТИ ОБУЧАЮЩИХСЯ NAZV";
+
+                Excel.Range rangeToMerge14 = worksheet.Range[worksheet.Cells[2, 2], worksheet.Cells[2, 8]];
+                rangeToMerge14.Merge();
+                rangeToMerge14.Value = "kurs курс за _i_ семестр 2023/2024 учебного года";
+
+                //рапмки
+                Excel.Range rangeRama = worksheet.Range[worksheet.Cells[4, 1], worksheet.Cells[33, dataGridView.Columns.Count]];
+                rangeRama.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                rangeRama.Borders.Weight = Excel.XlBorderWeight.xlThin;
+
+                Excel.Range rangeRama1 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[40, 4]];
+                rangeRama1.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
+                rangeRama1.Borders.Weight = Excel.XlBorderWeight.xlThin;
+
+                worksheet.Cells[42, 5].Value = "Заведующая ООиЗФО (ЭО) _________________";
+                worksheet.Cells[43, 5].Value = "Классный руководитель ___________________";
+                worksheet.Cells[44, 5].Value = "Староста ________________________________";
+
+                worksheet.Columns[1].AutoFit();
 
                 // Сохраняем изменения в файле
                 workbook.Save();

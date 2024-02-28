@@ -331,9 +331,10 @@ namespace Vedom.Menu.List
                 }
 
                 // назв и группа
-                Excel.Range rangeNaz = worksheet.Range["A1:L1"];
+                Excel.Range rangeNaz = worksheet.Range["A1:J1"];
                 rangeNaz.Merge();
                 rangeNaz.Value = "Ведомость аттестации и посещаемости студентов по группе NAZV" + " за " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
+                rangeNaz.Font.Size = 10;
 
                 // Объединяем ячейки предметов
                 Excel.Range rangeToMerge = worksheet.Range[worksheet.Cells[3, 3], worksheet.Cells[3, dataGridView.Columns.Count - 3]];
@@ -432,28 +433,22 @@ namespace Vedom.Menu.List
                     }
                 }
 
+
                 // запись всего часов
                 int v = 0;
                 int y = 0;
                 int n = 0;
-
+                int lastColumn1 = dataGridView.Columns.Count;
+                int startColumn1 = lastColumn1 - 2;
                 for (int row = 5; row <= 29; row++)
                 {
-                    v += Convert.ToInt32(worksheet.Cells[row, 8].Value);
+                    v += Convert.ToInt32(worksheet.Cells[row, startColumn1].Value);
+                    y += Convert.ToInt32(worksheet.Cells[row, startColumn1 + 1].Value);
+                    n += Convert.ToInt32(worksheet.Cells[row, startColumn1 + 2].Value);
                 }
-                worksheet.Cells[30, 8].Value = v;
-
-                for (int row = 5; row <= 29; row++)
-                {
-                    y += Convert.ToInt32(worksheet.Cells[row, 9].Value);
-                }
-                worksheet.Cells[30, 9].Value = y;
-
-                for (int row = 5; row <= 29; row++)
-                {
-                    n += Convert.ToInt32(worksheet.Cells[row, 10].Value);
-                }
-                worksheet.Cells[30, 10].Value = n;
+                worksheet.Cells[30, startColumn1].Value = v;
+                worksheet.Cells[30, startColumn1 + 1].Value = y;
+                worksheet.Cells[30, startColumn1 + 2].Value = n;
 
 
 
@@ -556,7 +551,7 @@ namespace Vedom.Menu.List
                 if (значение_ячейки_32_6 != null && значение_ячейки_33_6 != null)
                 {
                     float знач = Convert.ToSingle(значение_ячейки_32_6) - Convert.ToSingle(значение_ячейки_33_6);
-                    worksheet.Cells[35, 6].Value = знач / Convert.ToSingle(значение_ячейки_32_6) * 100;
+                    worksheet.Cells[35, 6].Value = Math.Round(знач / Convert.ToSingle(значение_ячейки_32_6) * 100, 1);
                 }
 
 
@@ -568,16 +563,14 @@ namespace Vedom.Menu.List
                 object значение_ячейки_34_6 = worksheet.Cells[34, 6].Value;
                 if (значение_ячейки_32_6 != null && значение_ячейки_34_6 != null)
                 {
-                    Console.WriteLine(значение_ячейки_34_6);
-                    Console.WriteLine(значение_ячейки_32_6);
-                    worksheet.Cells[36, 6].Value = Convert.ToSingle(значение_ячейки_34_6) / Convert.ToSingle(значение_ячейки_32_6) * 100;
+                    worksheet.Cells[36, 6].Value = Math.Round(Convert.ToSingle(значение_ячейки_34_6) / Convert.ToSingle(значение_ячейки_32_6) * 100, 1);
                 }
 
                 // поогулы на 1
                 Excel.Range rangeToMerge11 = worksheet.Range[worksheet.Cells[37, 1], worksheet.Cells[37, 5]];
                 rangeToMerge11.Merge();
                 rangeToMerge11.Value = "Прогулы на 1 человека час";
-                worksheet.Cells[37, 6].Value = Convert.ToDouble(worksheet.Cells[30, 10].Value) / Convert.ToDouble(worksheet.Cells[32, 6].Value);
+                worksheet.Cells[37, 6].Value = Math.Round(Convert.ToDouble(worksheet.Cells[30, startColumn1 + 2].Value) / Convert.ToDouble(worksheet.Cells[32, 6].Value), 1);
 
                 //рапмки
                 Excel.Range rangeRama = worksheet.Range[worksheet.Cells[3, 1], worksheet.Cells[30, dataGridView.Columns.Count]];
@@ -587,6 +580,11 @@ namespace Vedom.Menu.List
                 Excel.Range rangeRama1 = worksheet.Range[worksheet.Cells[32, 1], worksheet.Cells[37, 6]];
                 rangeRama1.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 rangeRama1.Borders.Weight = Excel.XlBorderWeight.xlThin;
+
+
+                // ширина столбов
+                Excel.Range Range1 = worksheet.Range[worksheet.Cells[4, 3], worksheet.Cells[4, dataGridView.Columns.Count]];
+                Range1.ColumnWidth = 7;
 
                 worksheet.Columns[1].AutoFit();
 
