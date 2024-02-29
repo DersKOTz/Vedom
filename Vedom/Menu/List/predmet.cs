@@ -247,7 +247,7 @@ namespace Vedom.Menu.List
                     worksheet.Cells[1, 4].Value = ("Преподаватель");
 
                     comboBox1.SelectedItem = "";
-
+                    // Запись данных
                     for (int i = 0; i < dataGridView1.Rows.Count; i++)
                     {
                         for (int j = 0; j < dataGridView1.Columns.Count; j++)
@@ -291,7 +291,7 @@ namespace Vedom.Menu.List
                     }
                     // Сортировка по столбцу 1 (A) по возрастанию, начиная со второй строки
                     Excel.Range sortRange = worksheet.Range["A2"].Resize[lastRow - 1]; // Игнорируем первую строку
-                    sortRange.Sort(sortRange.Columns[1], Excel.XlSortOrder.xlAscending);
+
                     // Сортировка по временной колонке, начиная со второй строки
                     sortRange = worksheet.Range["A2", tempColumn.Cells[lastRow, 1]]; // Диапазон от A2 до временной колонки в последней строке
                     sortRange.Sort(sortRange.Columns[usedRange.Columns.Count + 1], Excel.XlSortOrder.xlAscending);
