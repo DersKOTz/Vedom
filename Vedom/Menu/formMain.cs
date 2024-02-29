@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Vedom.Menu
 {
@@ -23,9 +24,32 @@ namespace Vedom.Menu
             home_Click(sender, e);
         }
 
+        public void kill()
+        {
+            Process[] processes = Process.GetProcessesByName("excel");
+            foreach (Process process in processes)
+            {
+                // Получаем объект приложения Excel для каждого процесса
+                Excel.Application excelApp = System.Runtime.InteropServices.Marshal.GetActiveObject("Excel.Application") as Excel.Application;
+
+                // Сохраняем и закрываем каждую книгу в приложении Excel
+                foreach (Excel.Workbook workbook in excelApp.Workbooks)
+                {
+                    workbook.Save();
+                    workbook.Close();
+                }
+
+                // Закрываем приложение Excel
+                excelApp.Quit();
+
+            }
+        }
+
         private void close_Click(object sender, EventArgs e)
         {
+            kill();
             Application.Exit();
+
         }
 
         public void restart(object sender, EventArgs e)
