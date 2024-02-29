@@ -705,7 +705,7 @@ namespace Vedom.Menu.List
                             {
                                 mergeRangeTotal.Value = "Зачётные\nдисциплины";
                             }
-                            else if (valueToFind == "Курсовой проект")
+                            else if (valueToFind == "Курсовик")
                             {
                                 mergeRangeTotal.Value = "Курсовой\nпроект";
                             }
@@ -730,6 +730,8 @@ namespace Vedom.Menu.List
                 }
                 MergeCells("Экзамен"); // объединение ячеек для "Экзамен"
                 MergeCells("Зачет"); // объединение ячеек для "зачет"
+                MergeCells("Курсовик"); // объединение ячеек для "зачет"
+                MergeCells("Практика"); // объединение ячеек для "зачет"
 
 
                 Excel.Range r1 = worksheet.Range[worksheet.Cells[5, 1], worksheet.Cells[6, 2]];
