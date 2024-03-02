@@ -88,25 +88,12 @@ namespace Vedom.Menu
             OpenForm<Menu.List.student>();
         }
 
-        private void propusk_Click(object sender, EventArgs e)
-        {
-            OpenForm<Menu.List.propusk>();
-        }
 
         private void predmet_Click(object sender, EventArgs e)
         {
             OpenForm<Menu.List.predmet>();
         }
 
-        private void mec_Click(object sender, EventArgs e)
-        {
-            OpenForm<Menu.List.mec>();
-        }
-
-        private void sem_Click(object sender, EventArgs e)
-        {
-            OpenForm<Menu.List.sem>();
-        }
 
         private bool isDragging = false;
         private Point offset;
@@ -144,10 +131,25 @@ namespace Vedom.Menu
             close.Image = Vedom.Properties.Resources.free_icon_delete_cross_63694;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click_1(object sender, EventArgs e)
         {
             string filePath = "vedom.xlsx";
             Process.Start(filePath);
+        }
+
+        private void propusk_Click_1(object sender, EventArgs e)
+        {
+            OpenForm<Menu.List.propusk>();
+        }
+
+        private void mec_Click_1(object sender, EventArgs e)
+        {
+            OpenForm<Menu.List.mec>();
+        }
+
+        private void sem_Click_1(object sender, EventArgs e)
+        {
+            OpenForm<Menu.List.sem>();
         }
     }
 }

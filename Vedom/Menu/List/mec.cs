@@ -65,6 +65,7 @@ namespace Vedom.Menu.List
             string studentsSheetName = "студенты";
             string attendanceSheetName = "Прогулы " + selectedMonthYear + " " + Properties.Settings.Default.semsestSave;
             string mecSheetName = "Ведомость " + selectedMonthYear + " " + Properties.Settings.Default.semsestSave;
+
             Excel.Application excelApp = new Excel.Application();
             Excel.Workbook workbook = null;
 
@@ -185,6 +186,19 @@ namespace Vedom.Menu.List
                     dataGridView1.DataSource = dt;
                 }
 
+                // удаляем пустые листы
+                foreach (Excel.Worksheet sheet in workbook.Sheets)
+                {
+                    Excel.Range usedRange = sheet.UsedRange;
+                    // Проверка на пустоту листа
+                    if (usedRange.Rows.Count == 1 && usedRange.Columns.Count == 1 && string.IsNullOrEmpty(usedRange.Cells[1, 1].Value))
+                    {
+                        // Если лист пуст, удалить его
+                        sheet.Delete();
+                    }
+                }
+
+                workbook.Save();
                 workbook.Close();
                 excelApp.Quit();
             }
@@ -588,6 +602,19 @@ namespace Vedom.Menu.List
 
                 worksheet.Columns[1].AutoFit();
 
+
+                // удаляем пустые листы
+                foreach (Excel.Worksheet sheet in workbook.Sheets)
+                {
+                    Excel.Range usedRange = sheet.UsedRange;
+                    // Проверка на пустоту листа
+                    if (usedRange.Rows.Count == 1 && usedRange.Columns.Count == 1 && string.IsNullOrEmpty(usedRange.Cells[1, 1].Value))
+                    {
+                        // Если лист пуст, удалить его
+                        sheet.Delete();
+                    }
+                }
+
                 // Сохраняем изменения в файле
                 workbook.Save();
                 workbook.Close();
@@ -603,6 +630,50 @@ namespace Vedom.Menu.List
             DateTime selectedDate = dateTimePicker1.Value;
             string selectedMonthYear = selectedDate.ToString("MMMM yyyy");
             LoadDataFromExcel(selectedMonthYear);
+        }
+
+
+        private void print_Click(object sender, EventArgs e)
+        {
+            string fileName = "vedom.xlsx";
+            ExportToExcel(dataGridView1, fileName);
+
+            DateTime selectedDate = dateTimePicker1.Value;
+            string selectedMonthYear = selectedDate.ToString("MMMM yyyy");
+            string excelFilePath = "vedom.xlsx";
+            // Название листа
+            string sheetName = "Ведомость " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU")) + " " + Properties.Settings.Default.semsestSave;
+            // Создание объекта приложения Excel
+            Excel.Application excelApp = new Excel.Application();
+            // Открытие книги Excel
+            Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(excelFilePath);
+            // Получение листа по имени
+            Excel.Worksheet excelWorksheet = excelWorkbook.Sheets[sheetName];
+            int lastColumnIndex = dataGridView1.Columns.Count;
+            // Если количество столбцов меньше 10, установите lastColumnIndex на 10
+            if (lastColumnIndex < 10)
+            {
+                lastColumnIndex = 10;
+            }
+            // Формирование диапазона от A1 до последнего столбца
+            Excel.Range excelRange = excelWorksheet.Range["A1", excelWorksheet.Cells[45, lastColumnIndex]];
+            // Печать всего листа
+
+            // Автоматическая подгонка размеров страницы по содержимому
+            excelRange.Columns.AutoFit();
+            excelRange.Rows.AutoFit();
+
+            // Вписать лист на одну страницу
+            excelWorksheet.PageSetup.FitToPagesWide = 1;
+            excelWorksheet.PageSetup.FitToPagesTall = 1;
+
+            // Печать всего листа
+            excelRange.PrintOutEx(Type.Missing, Type.Missing, Type.Missing, Type.Missing,
+                Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            // Закрытие книги Excel
+            excelWorkbook.Close(false);
+            // Закрытие приложения Excel
+            excelApp.Quit();
         }
     }
 }

@@ -33,6 +33,7 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.save = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.print = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -80,12 +81,27 @@
             this.dataGridView1.Size = new System.Drawing.Size(567, 460);
             this.dataGridView1.TabIndex = 6;
             // 
+            // print
+            // 
+            this.print.FlatAppearance.BorderSize = 0;
+            this.print.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.print.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.print.Location = new System.Drawing.Point(613, 338);
+            this.print.Name = "print";
+            this.print.Size = new System.Drawing.Size(93, 33);
+            this.print.TabIndex = 9;
+            this.print.Text = "Печать";
+            this.print.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.print.UseVisualStyleBackColor = true;
+            this.print.Click += new System.EventHandler(this.print_Click);
+            // 
             // sem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightBlue;
             this.ClientSize = new System.Drawing.Size(727, 484);
+            this.Controls.Add(this.print);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.save);
             this.Controls.Add(this.dataGridView1);
@@ -103,5 +119,6 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Button save;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button print;
     }
 }

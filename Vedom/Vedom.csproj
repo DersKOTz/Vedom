@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{83AC5291-DDEA-4DF4-857E-7B68E0F12A5C}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>Vedom</RootNamespace>
     <AssemblyName>Vedom</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
