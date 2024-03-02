@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="free-icon-save-7002186" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\free-icon-save-7002186.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="free-icon-semester-4827192" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\free-icon-semester-4827192.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -133,8 +136,11 @@
   <data name="free-icon-absence-10140288" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\free-icon-absence-10140288.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="free-icon-excel-732220" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\free-icon-excel-732220.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="free-icon-book-4213415" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\free-icon-book-4213415.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="free-icon-excel-732066" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\free-icon-excel-732066.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="free-icon-clear-1632708" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\free-icon-clear-1632708.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -142,13 +148,13 @@
   <data name="free-icon-open-folder-5082617" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\free-icon-open-folder-5082617.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="free-icon-book-4213415" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\free-icon-book-4213415.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="free-icon-excel-732220" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\free-icon-excel-732220.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="free-icon-month-5296802" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\free-icon-month-5296802.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="free-icon-excel-732066" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\free-icon-excel-732066.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="free-icon-printing-446991" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\free-icon-printing-446991.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

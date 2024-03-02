@@ -31,6 +31,8 @@ namespace Vedom.Menu.List
 
         private void LoadDataFromExcel()
         {
+            dataGridView1.Visible = false;
+            label1.Visible = true;
             string fileName = "vedom.xlsx";
             string studentsSheetName = "дисциплины";
             Excel.Application excelApp = new Excel.Application();
@@ -116,7 +118,11 @@ namespace Vedom.Menu.List
 
             System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
             dataGridView1.Columns[0].Width = 80;
-
+            dataGridView1.Columns[1].Width = 300;
+            dataGridView1.Columns[2].Width = 160;
+            dataGridView1.Columns[3].Width = 200;
+            dataGridView1.Visible = true;
+            label1.Visible = false;
 
             List<string> semestersList = new List<string>();
             semestersList.Add("");

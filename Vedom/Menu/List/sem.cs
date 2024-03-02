@@ -26,10 +26,8 @@ namespace Vedom.Menu.List
 
         private void sem_Load(object sender, EventArgs e)
         {
-            dataGridView1.Visible = false;
             LoadSemesterComboBoxItems();
             LoadDataFromExcel();
-            dataGridView1.Visible = true;
         }
 
         private void LoadSemesterComboBoxItems()
@@ -55,6 +53,8 @@ namespace Vedom.Menu.List
         }
         private void LoadDataFromExcel()
         {
+            dataGridView1.Visible = false;
+            label1.Visible = true;
             string fileName = "vedom.xlsx";
             string studentsSheetName = "студенты";
             string vedomSheetName = "Ведомость семестр №" + Properties.Settings.Default.semsestSave;
@@ -243,6 +243,8 @@ namespace Vedom.Menu.List
                 workbook.Close();
                 excelApp.Quit();
                 System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+                dataGridView1.Visible = true;
+                label1.Visible = false;
             }
 
 
@@ -739,11 +741,11 @@ namespace Vedom.Menu.List
 
                 Excel.Range rangeToMerge13 = worksheet.Range[worksheet.Cells[1, 2], worksheet.Cells[1, 8]];
                 rangeToMerge13.Merge();
-                rangeToMerge13.Value = "СВОДНАЯ ВЕДОМОСТЬ УСПЕВАЕМОСТИ ОБУЧАЮЩИХСЯ NAZV";
+                rangeToMerge13.Value = "СВОДНАЯ ВЕДОМОСТЬ УСПЕВАЕМОСТИ ОБУЧАЮЩИХСЯ " + Properties.Settings.Default.group;
 
                 Excel.Range rangeToMerge14 = worksheet.Range[worksheet.Cells[2, 2], worksheet.Cells[2, 8]];
                 rangeToMerge14.Merge();
-                rangeToMerge14.Value = "kurs курс за _i_ семестр 2023/2024 учебного года";
+                rangeToMerge14.Value = Properties.Settings.Default.kurs + " курс за " + "_" + Properties.Settings.Default.semsestSave + "_" + " семестр" + Properties.Settings.Default.years + " учебного года";
 
                 //рапмки
                 Excel.Range rangeRama = worksheet.Range[worksheet.Cells[4, 1], worksheet.Cells[33, dataGridView.Columns.Count]];
@@ -754,7 +756,7 @@ namespace Vedom.Menu.List
                 rangeRama1.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 rangeRama1.Borders.Weight = Excel.XlBorderWeight.xlThin;
 
-                worksheet.Cells[42, 5].Value = "Заведующая ООиЗФО (ЭО) _________________";
+                worksheet.Cells[42, 5].Value = "Заведующий " + Properties.Settings.Default.fak + " _________________";
                 worksheet.Cells[43, 5].Value = "Классный руководитель ___________________";
                 worksheet.Cells[44, 5].Value = "Староста ________________________________";
 

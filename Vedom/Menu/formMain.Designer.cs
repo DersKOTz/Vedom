@@ -82,7 +82,7 @@
             this.menu.Dock = System.Windows.Forms.DockStyle.Left;
             this.menu.Location = new System.Drawing.Point(0, 0);
             this.menu.Name = "menu";
-            this.menu.Size = new System.Drawing.Size(206, 547);
+            this.menu.Size = new System.Drawing.Size(206, 718);
             this.menu.TabIndex = 0;
             // 
             // panel3
@@ -348,15 +348,15 @@
             // content
             // 
             this.content.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.content.Location = new System.Drawing.Point(224, 51);
+            this.content.Location = new System.Drawing.Point(224, 44);
             this.content.Name = "content";
-            this.content.Size = new System.Drawing.Size(727, 484);
+            this.content.Size = new System.Drawing.Size(1025, 663);
             this.content.TabIndex = 2;
             // 
             // close
             // 
             this.close.Image = global::Vedom.Properties.Resources.free_icon_delete_cross_63694;
-            this.close.Location = new System.Drawing.Point(913, 12);
+            this.close.Location = new System.Drawing.Point(1208, 12);
             this.close.Name = "close";
             this.close.Size = new System.Drawing.Size(38, 26);
             this.close.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -371,7 +371,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightBlue;
-            this.ClientSize = new System.Drawing.Size(962, 547);
+            this.ClientSize = new System.Drawing.Size(1258, 718);
             this.Controls.Add(this.content);
             this.Controls.Add(this.close);
             this.Controls.Add(this.menu);

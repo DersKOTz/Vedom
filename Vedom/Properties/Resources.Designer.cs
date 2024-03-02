@@ -153,6 +153,26 @@ namespace Vedom.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap free_icon_printing_446991 {
+            get {
+                object obj = ResourceManager.GetObject("free-icon-printing-446991", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap free_icon_save_7002186 {
+            get {
+                object obj = ResourceManager.GetObject("free-icon-save-7002186", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap free_icon_semester_4827192 {
             get {
                 object obj = ResourceManager.GetObject("free-icon-semester-4827192", resourceCulture);

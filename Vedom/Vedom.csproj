@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{83AC5291-DDEA-4DF4-857E-7B68E0F12A5C}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>Vedom</RootNamespace>
     <AssemblyName>Vedom</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -255,6 +255,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\free-icon-excel-732066.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-save-7002186.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\free-icon-printing-446991.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

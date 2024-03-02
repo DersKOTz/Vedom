@@ -16,5 +16,22 @@ namespace Vedom.Menu.List
         {
             InitializeComponent();
         }
+
+        private void save_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.group = group.Text;
+            Properties.Settings.Default.kurs = kurs.Text;
+            Properties.Settings.Default.fak = fak.Text;
+            Properties.Settings.Default.years = years.Text;
+            Properties.Settings.Default.Save();
+        }
+
+        private void home_Load(object sender, EventArgs e)
+        {
+            group.Text = Properties.Settings.Default.group;
+            kurs.Text = Properties.Settings.Default.kurs;
+            fak.Text = Properties.Settings.Default.fak;
+            years.Text = Properties.Settings.Default.years;
+        }
     }
 }

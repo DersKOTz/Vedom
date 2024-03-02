@@ -61,6 +61,8 @@ namespace Vedom.Menu.List
 
         private void LoadDataFromExcel(string selectedMonthYear)
         {
+            dataGridView1.Visible = false;
+            label1.Visible = true;
             string fileName = "vedom.xlsx";
             string studentsSheetName = "студенты";
             string attendanceSheetName = "Прогулы " + selectedMonthYear + " " + Properties.Settings.Default.semsestSave;
@@ -209,8 +211,8 @@ namespace Vedom.Menu.List
             dataGridView1.Columns[0].ReadOnly = true;
             dataGridView1.Columns[1].ReadOnly = true;
             dataGridView1.AllowUserToAddRows = false;
-
-
+            dataGridView1.Visible = true;
+            label1.Visible = false;
         }
 
         private int FindColumnIndex(Excel.Worksheet sheet, string columnName)
@@ -347,7 +349,7 @@ namespace Vedom.Menu.List
                 // назв и группа
                 Excel.Range rangeNaz = worksheet.Range["A1:J1"];
                 rangeNaz.Merge();
-                rangeNaz.Value = "Ведомость аттестации и посещаемости студентов по группе NAZV" + " за " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
+                rangeNaz.Value = "Ведомость аттестации и посещаемости студентов по группе " + Properties.Settings.Default.group + " за " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"));
                 rangeNaz.Font.Size = 10;
 
                 // Объединяем ячейки предметов

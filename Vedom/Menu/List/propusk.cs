@@ -32,6 +32,8 @@ namespace Vedom.Menu.List
 
         private void LoadDataFromExcel(string selectedMonthYear)
         {
+            dataGridView1.Visible = false;
+            label1.Visible = true;
             string fileName = "vedom.xlsx";
             string studentsSheetName = "студенты";
             string attendanceSheetName = "Прогулы " + selectedMonthYear + " " + Properties.Settings.Default.semsestSave;
@@ -132,9 +134,16 @@ namespace Vedom.Menu.List
             System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
 
             dataGridView1.Columns[0].Width = 30;
+            for (int j = 2; j <= dataGridView1.ColumnCount - 1; j++)
+            {
+                dataGridView1.Columns[j].Width = 60;
+            }
+
             dataGridView1.Columns[0].ReadOnly = true;
             dataGridView1.Columns[1].ReadOnly = true;
             dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.Visible = true;
+            label1.Visible = false;
         }
 
         private bool WorksheetExists(Excel.Workbook workbook, string worksheetName)
