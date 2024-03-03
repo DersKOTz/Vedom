@@ -80,7 +80,7 @@ namespace Vedom.Menu.List
                 }
 
                 if (worksheet != null)
-                {                   
+                {
                     // Создаем DataTable для хранения данных
                     DataTable dt = new DataTable();
                     dt.Columns.Add("№");
@@ -90,30 +90,45 @@ namespace Vedom.Menu.List
                     for (int i = 2; i <= worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
                     {
                         DataRow row = dt.NewRow();
-                        row["№"] = worksheet.Cells[i, 1].Value;                      
+                        row["№"] = worksheet.Cells[i, 1].Value;
                         row["ФИО"] = worksheet.Cells[i, 2].Value;
                         dt.Rows.Add(row);
                     }
 
                     // Отображаем данные в DataGridView
                     dataGridView1.DataSource = dt;
-                    dataGridView1.Columns["ФИО"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;                              
+                    dataGridView1.Columns["ФИО"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 }
 
+                workbook.Save();
                 workbook.Close();
                 excelApp.Quit();
             }
 
             System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
             dataGridView1.Columns[0].Width = 30;
+
+            if (Properties.Settings.Default.dop1 == 0)
+            {
+                save1();
+                Properties.Settings.Default.dop1 = 1;
+                Properties.Settings.Default.Save();
+                LoadDataFromExcel();
+            }
+
             dataGridView1.Visible = true;
             label1.Visible = false;
             dataGridView1.AllowUserToAddRows = false;
         }
 
-       
+
 
         private void save_Click(object sender, EventArgs e)
+        {
+            save1();
+        }
+
+        private void save1()
         {
             string fileName = "vedom.xlsx";
             string studentsSheetName = "студенты";
@@ -164,7 +179,7 @@ namespace Vedom.Menu.List
                     worksheet.Name = studentsSheetName;
                     workbook.Save(); // Сохраняем изменения в файле
                 }
-                
+
                 worksheet.Cells[1, 1] = "№";
                 worksheet.Cells[1, 2] = "ФИО";
 
@@ -198,6 +213,5 @@ namespace Vedom.Menu.List
             MessageBox.Show("Данные сохранены в Excel файл!");
         }
 
-       
     }
 }

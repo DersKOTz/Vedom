@@ -26,22 +26,26 @@ namespace Vedom.Menu
 
         public void kill()
         {
-            Process[] processes = Process.GetProcessesByName("excel");
-            foreach (Process process in processes)
+            try
             {
-                // Получаем объект приложения Excel для каждого процесса
-                Excel.Application excelApp = System.Runtime.InteropServices.Marshal.GetActiveObject("Excel.Application") as Excel.Application;
-
-                // Сохраняем и закрываем каждую книгу в приложении Excel
-                foreach (Excel.Workbook workbook in excelApp.Workbooks)
+                Process[] processes = Process.GetProcessesByName("excel");
+                foreach (Process process in processes)
                 {
-                    workbook.Save();
-                    workbook.Close();
+                    // Получаем объект приложения Excel для каждого процесса
+                    Excel.Application excelApp = System.Runtime.InteropServices.Marshal.GetActiveObject("Excel.Application") as Excel.Application;
+                    // Сохраняем и закрываем каждую книгу в приложении Excel
+                    foreach (Excel.Workbook workbook in excelApp.Workbooks)
+                    {
+                        workbook.Save();
+                        workbook.Close();
+                    }
+                    // Закрываем приложение Excel
+                    excelApp.Quit();
                 }
-
-                // Закрываем приложение Excel
-                excelApp.Quit();
-
+            }
+            catch 
+            {
+                Application.Exit();
             }
         }
 

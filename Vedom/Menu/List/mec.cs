@@ -604,6 +604,17 @@ namespace Vedom.Menu.List
 
                 worksheet.Columns[1].AutoFit();
 
+                // ячейки
+                Excel.Range Rang1 = worksheet.Range[worksheet.Cells[5, 3], worksheet.Cells[29, dataGridView.Columns.Count]];
+                Rang1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+                // часы
+                Excel.Range Rang2 = worksheet.Range[worksheet.Cells[32, dataGridView.Columns.Count - 2], worksheet.Cells[37, dataGridView.Columns.Count]];
+                Rang2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+                // доп
+                Excel.Range Rang3 = worksheet.Range[worksheet.Cells[32, 6], worksheet.Cells[37, 6]];
+                Rang3.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                 // удаляем пустые листы
                 foreach (Excel.Worksheet sheet in workbook.Sheets)

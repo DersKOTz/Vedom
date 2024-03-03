@@ -93,5 +93,17 @@ namespace Vedom.Properties {
                 this["years"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int dop1 {
+            get {
+                return ((int)(this["dop1"]));
+            }
+            set {
+                this["dop1"] = value;
+            }
+        }
     }
 }

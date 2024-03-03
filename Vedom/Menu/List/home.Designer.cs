@@ -45,12 +45,14 @@
             this.kurs = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.pictureBox8 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.textPic)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).BeginInit();
             this.SuspendLayout();
             // 
             // textPic
@@ -96,6 +98,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.pictureBox8);
             this.panel1.Controls.Add(this.save);
             this.panel1.Controls.Add(this.panel5);
             this.panel1.Controls.Add(this.panel4);
@@ -111,7 +114,7 @@
             this.save.FlatAppearance.BorderSize = 0;
             this.save.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.save.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.save.Location = new System.Drawing.Point(3, 158);
+            this.save.Location = new System.Drawing.Point(47, 158);
             this.save.Name = "save";
             this.save.Size = new System.Drawing.Size(93, 33);
             this.save.TabIndex = 67;
@@ -217,6 +220,16 @@
             this.panel2.Size = new System.Drawing.Size(278, 38);
             this.panel2.TabIndex = 63;
             // 
+            // pictureBox8
+            // 
+            this.pictureBox8.Image = global::Vedom.Properties.Resources.free_icon_save_7002186;
+            this.pictureBox8.Location = new System.Drawing.Point(3, 158);
+            this.pictureBox8.Name = "pictureBox8";
+            this.pictureBox8.Size = new System.Drawing.Size(38, 33);
+            this.pictureBox8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox8.TabIndex = 66;
+            this.pictureBox8.TabStop = false;
+            // 
             // home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -240,6 +253,7 @@
             this.panel3.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox8)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -262,5 +276,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button save;
+        private System.Windows.Forms.PictureBox pictureBox8;
     }
 }
