@@ -377,7 +377,8 @@
             this.Controls.Add(this.menu);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "formMain";
-            this.Text = "formMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Vedom";
             this.Load += new System.EventHandler(this.formMain_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.formMain_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.formMain_MouseMove);

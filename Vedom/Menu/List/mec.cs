@@ -53,7 +53,7 @@ namespace Vedom.Menu.List
             }
             else
             {
-                comboBox1.SelectedIndex = 0;
+                comboBox1.SelectedIndex = 1;
             }
         }
 
@@ -144,7 +144,9 @@ namespace Vedom.Menu.List
 
                     // Получение списка предметов текущего семестра из листа "Дисциплины"
                     List<string> subjects = new List<string>();
+
                     Excel.Worksheet disciplinesSheet = workbook.Sheets["Дисциплины"];
+
                     for (int i = 2; i <= disciplinesSheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
                     {
                         string subjectName = disciplinesSheet.Cells[i, 2].Value?.ToString();
