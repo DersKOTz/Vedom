@@ -49,11 +49,15 @@ namespace Vedom.Menu.List
             }
             if (Properties.Settings.Default.semsestSave != null)
             {
-                comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
-            }
-            else
-            {
-                comboBox1.SelectedIndex = 1;
+                if ((Properties.Settings.Default.semsestSave == ""))
+                {
+                    comboBox1.SelectedIndex = 1;
+                }
+                else
+                {
+                    comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
+                }
+                
             }
         }
 

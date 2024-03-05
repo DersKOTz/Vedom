@@ -41,13 +41,13 @@ namespace Vedom.Menu.List
                         comboBox1.Items.Add(item);
                     }
                 }
-                if (Properties.Settings.Default.semsestSave != null)
+                if ((Properties.Settings.Default.semsestSave == ""))
                 {
-                    comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
+                    comboBox1.SelectedIndex = 1;
                 }
                 else
                 {
-                    comboBox1.SelectedIndex = 0;
+                    comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
                 }
             }
         }
