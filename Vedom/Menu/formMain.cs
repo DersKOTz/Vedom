@@ -36,14 +36,20 @@ namespace Vedom.Menu
                     // Сохраняем и закрываем каждую книгу в приложении Excel
                     foreach (Excel.Workbook workbook in excelApp.Workbooks)
                     {
-                        workbook.Save();
-                        workbook.Close();
+                        if (workbook.Name == "vedom")
+                        {
+                            // Сохраняем и закрываем книгу
+                            workbook.Save();
+                            workbook.Close();
+                            excelApp.Quit();
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+                            process.Kill();
+                        }
                     }
-                    // Закрываем приложение Excel
-                    excelApp.Quit();
+
                 }
             }
-            catch 
+            catch
             {
                 Application.Exit();
             }
