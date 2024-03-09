@@ -471,7 +471,7 @@ namespace Vedom.Menu.List
                 // пропуски
                 for (int i = dataGridView.Columns.Count - 3; i < dataGridView.Columns.Count; i++)
                 {
-                    worksheet.Cells[5, i + 10] = dataGridView.Columns[i].HeaderText;
+                    worksheet.Cells[5, i + 11] = dataGridView.Columns[i].HeaderText;
                 }
 
 
@@ -484,12 +484,12 @@ namespace Vedom.Menu.List
                     {
                         if (dataGridView.Rows[i].Cells[j].Value != null)
                         {
-                            worksheet.Cells[i + 8, j + 10] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                            worksheet.Cells[i + 8, j + 11] = dataGridView.Rows[i].Cells[j].Value.ToString();
                         }
                         else
                         {
                             // Обработка случая, когда значение ячейки равно null
-                            worksheet.Cells[i + 8, j + 10] = ""; // Или другое значение по умолчанию
+                            worksheet.Cells[i + 8, j + 11] = ""; // Или другое значение по умолчанию
                         }
                     }
 
@@ -508,28 +508,25 @@ namespace Vedom.Menu.List
                     // зачет
                     for (int j = countExams + 3; j <= countExams + countExams1 + 2; j++)
                     {
-                        worksheet.Cells[i + 8, 8] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
-                        Console.WriteLine("а: " + j.ToString());
+                        worksheet.Cells[i + 8, j - countExams + 5] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
                     }
 
                     // курсач
                     for (int j = countExams + countExams1 + 3; j <= countExams + countExams1 + countExams2 + 2; j++)
                     {
-                        worksheet.Cells[i + 8, 14] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
-                        Console.WriteLine("а: " + j.ToString());
+                        worksheet.Cells[i + 8, j - countExams - countExams1 + 11] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
                     }
 
                     // практика
                     for (int j = countExams + countExams1 + countExams2 + 3; j <= countExams + countExams1 + countExams2 + countExams3 + 2; j++)
                     {
-                        worksheet.Cells[i + 8, 16] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
-                        Console.WriteLine("а: " + j.ToString());
+                        worksheet.Cells[i + 8, j - countExams - countExams1 - countExams2 + 13] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
                     }
                 }
 
 
 
-                /*
+
                 // 11 32
                 for (int i = 11; i <= 32; i++)
                 {
@@ -547,7 +544,7 @@ namespace Vedom.Menu.List
                         // Далее ваше действие с rangeToMerge2, если ячейка B4 пуста
                     }
                 }
-                */
+
 
                 // хз
                 worksheet.Cells[6, 2].Value = "Дисциплины";
@@ -566,7 +563,7 @@ namespace Vedom.Menu.List
                 range1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                 // всего часов
-                Excel.Range rangeToMerge5 = worksheet.Range[worksheet.Cells[33, 1], worksheet.Cells[33, dataGridView.Columns.Count - 3]];
+                Excel.Range rangeToMerge5 = worksheet.Range[worksheet.Cells[33, 1], worksheet.Cells[33, 17]];
                 rangeToMerge5.Merge();
                 rangeToMerge5.Value = "Всего пропусков (час)";
                 rangeToMerge5.HorizontalAlignment = Excel.XlHAlign.xlHAlignRight;
@@ -579,13 +576,13 @@ namespace Vedom.Menu.List
                 int startColumn1 = lastColumn1 - 2;
                 for (int row = 8; row <= 32; row++)
                 {
-                    v += Convert.ToInt32(worksheet.Cells[row, startColumn1].Value);
-                    y += Convert.ToInt32(worksheet.Cells[row, startColumn1 + 1].Value);
-                    n += Convert.ToInt32(worksheet.Cells[row, startColumn1 + 2].Value);
+                    v += Convert.ToInt32(worksheet.Cells[row, 18].Value);
+                    y += Convert.ToInt32(worksheet.Cells[row, 19].Value);
+                    n += Convert.ToInt32(worksheet.Cells[row, 20].Value);
                 }
-                worksheet.Cells[33, startColumn1].Value = v;
-                worksheet.Cells[33, startColumn1 + 1].Value = y;
-                worksheet.Cells[33, startColumn1 + 2].Value = n;
+                worksheet.Cells[33, 18].Value = v;
+                worksheet.Cells[33, 19].Value = y;
+                worksheet.Cells[33, 20].Value = n;
 
 
 
@@ -734,52 +731,33 @@ namespace Vedom.Menu.List
 
 
                 // предметы чето там
-                Excel.Range range = worksheet.Range[worksheet.Cells[5, 3], worksheet.Cells[6, dataGridView.Columns.Count - 3]];
+                Excel.Range range = worksheet.Range[worksheet.Cells[5, 3], worksheet.Cells[6, 17]];
                 range.Orientation = 90;
                 range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                 range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
                 range.Columns.AutoFit();
                 // range.ColumnWidth += 2;
 
-                /*
+
                 // объед пропусков
-                Excel.Range range11 = worksheet.Range[worksheet.Cells[5, dataGridView.Columns.Count - 2], worksheet.Cells[6, dataGridView.Columns.Count - 2]];
-                Excel.Range range12 = worksheet.Range[worksheet.Cells[5, dataGridView.Columns.Count - 1], worksheet.Cells[6, dataGridView.Columns.Count - 1]];
-                Excel.Range range13 = worksheet.Range[worksheet.Cells[5, dataGridView.Columns.Count], worksheet.Cells[6, dataGridView.Columns.Count]];
-                Excel.Range range14 = worksheet.Range[worksheet.Cells[4, dataGridView.Columns.Count - 2], worksheet.Cells[4, dataGridView.Columns.Count]];
+                Excel.Range range11 = worksheet.Range[worksheet.Cells[5, 18], worksheet.Cells[6, 18]];
+                Excel.Range range12 = worksheet.Range[worksheet.Cells[5, 19], worksheet.Cells[6, 19]];
+                Excel.Range range13 = worksheet.Range[worksheet.Cells[5, 20], worksheet.Cells[6, 20]];
+                Excel.Range range14 = worksheet.Range[worksheet.Cells[4, 18], worksheet.Cells[4, 20]];
                 range11.Merge();
                 range12.Merge();
                 range13.Merge();
                 range14.Merge();
                 range14.Value = "Пропуски (час)";
-                range11.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                range11.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-                range12.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                range12.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-                range13.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                range13.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-                range14.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                range14.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-                */
+
 
                 // предметы UI
-                Excel.Range range15 = worksheet.Range[worksheet.Cells[6, 3], worksheet.Cells[6, dataGridView.Columns.Count - 3]];
+                Excel.Range range15 = worksheet.Range[worksheet.Cells[6, 3], worksheet.Cells[6, 17]];
                 range15.WrapText = true;
                 range15.RowHeight = 110;
-                range15.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                range15.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-                range15.Columns.AutoFit();
-                //range15.ColumnWidth += 2;
-
+                range15.ColumnWidth = 4;
 
                 int endColumn = dataGridView.Columns.Count - 3; // Конечная колонка, где заканчивается поиск
-
-
-
-
-                Excel.Range r1 = worksheet.Range[worksheet.Cells[5, 1], worksheet.Cells[6, 2]];
-                r1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                r1.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
 
                 Excel.Range rangeToMerge13 = worksheet.Range[worksheet.Cells[1, 2], worksheet.Cells[1, 8]];
                 rangeToMerge13.Merge();
@@ -787,10 +765,10 @@ namespace Vedom.Menu.List
 
                 Excel.Range rangeToMerge14 = worksheet.Range[worksheet.Cells[2, 2], worksheet.Cells[2, 8]];
                 rangeToMerge14.Merge();
-                rangeToMerge14.Value = Properties.Settings.Default.kurs + " курс за " + "_" + Properties.Settings.Default.semsestSave + "_" + " семестр" + Properties.Settings.Default.years + " учебного года";
+                rangeToMerge14.Value = Properties.Settings.Default.kurs + " курс за " + "_" + Properties.Settings.Default.semsestSave + "_" + " семестр " + Properties.Settings.Default.years + " учебного года";
 
                 //рапмки
-                Excel.Range rangeRama = worksheet.Range[worksheet.Cells[4, 1], worksheet.Cells[33, dataGridView.Columns.Count]];
+                Excel.Range rangeRama = worksheet.Range[worksheet.Cells[4, 1], worksheet.Cells[33, 20]];
                 rangeRama.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 rangeRama.Borders.Weight = Excel.XlBorderWeight.xlThin;
 
@@ -803,14 +781,6 @@ namespace Vedom.Menu.List
                 worksheet.Cells[44, 5].Value = "Староста ________________________________";
 
                 worksheet.Columns[1].AutoFit();
-
-                // ячейки
-                Excel.Range Rang1 = worksheet.Range[worksheet.Cells[8, 3], worksheet.Cells[32, dataGridView.Columns.Count]];
-                Rang1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-
-                // часы
-                Excel.Range Rang2 = worksheet.Range[worksheet.Cells[33, dataGridView.Columns.Count - 2], worksheet.Cells[33, dataGridView.Columns.Count]];
-                Rang2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                 // доп
                 Excel.Range Rang3 = worksheet.Range[worksheet.Cells[35, 4], worksheet.Cells[40, 4]];
@@ -861,11 +831,7 @@ namespace Vedom.Menu.List
             }
             // Формирование диапазона от A1 до последнего столбца
             Excel.Range excelRange = excelWorksheet.Range["A1", excelWorksheet.Cells[45, lastColumnIndex]];
-            /*
-            // Автоматическая подгонка размеров страницы по содержимому
-            excelRange.Columns.AutoFit();
-            excelRange.Rows.AutoFit();
-            */
+
             // Вписать лист на одну страницу
             excelWorksheet.PageSetup.FitToPagesWide = 1;
             excelWorksheet.PageSetup.FitToPagesTall = 1;
