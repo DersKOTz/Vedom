@@ -399,37 +399,137 @@ namespace Vedom.Menu.List
                     }
                 }
 
+                int countExams = subjects.Count(s => s == "Экзамен");
+                int countExams1 = subjects.Count(s => s == "Зачет");
+                int countExams2 = subjects.Count(s => s == "Курсовик");
+                int countExams3 = subjects.Count(s => s == "Практика");
 
-                // загрузка заголовков
-                int startRow = 7;
-                for (int i = 0; i < dataGridView.Columns.Count; i++)
+                // экзамен
+                for (int i = 2; i < countExams + 2; i++)
                 {
-                    string[] headerLines = dataGridView.Columns[i].HeaderText.Split('\n'); // Разбиваем двухстрочный заголовок на отдельные строки
-
-                    for (int j = 0; j < headerLines.Length; j++)
+                    worksheet.Cells[6, i + 1] = dataGridView.Columns[i].HeaderText;
+                    // экзам
+                    for (int ai = 0; ai < countExams; ai++)
                     {
-                        worksheet.Cells[startRow + j - 1, i + 1] = headerLines[j]; // Записываем каждую строку заголовка в отдельную ячейку
+                        worksheet.Cells[4, ai + 3] = subjects[ai]; // Используем индексы строк и столбцов, начиная с 1
+                    }
+                    // фио
+                    for (int ai = 0; ai < countExams; ai++)
+                    {
+                        worksheet.Cells[5, ai + 3] = subjects2[ai]; // Используем индексы строк и столбцов, начиная с 1
                     }
                 }
 
-                for (int i = 0; i < subjects.Count; i++)
+                // зачет
+                for (int i = 2; i < countExams1 + 2; i++)
                 {
-                    worksheet.Cells[4, i + 3] = subjects[i]; // Используем индексы строк и столбцов, начиная с 1
+                    worksheet.Cells[6, i + 6] = dataGridView.Columns[i + countExams].HeaderText;
+                    // экзам
+                    for (int ai = 0; ai < countExams1; ai++)
+                    {
+                        worksheet.Cells[4, ai + 8] = subjects[ai + countExams]; // Используем индексы строк и столбцов, начиная с 1
+                    }
+                    // фио
+                    for (int ai = 0; ai < countExams1; ai++)
+                    {
+                        worksheet.Cells[5, ai + 8] = subjects2[ai + countExams]; // Используем индексы строк и столбцов, начиная с 1
+                    }
                 }
 
-                for (int i = 0; i < subjects2.Count; i++)
+                // курсовик
+                for (int i = 2; i < countExams2 + 2; i++)
                 {
-                    worksheet.Cells[5, i + 3] = subjects2[i]; // Используем индексы строк и столбцов, начиная с 1
+                    worksheet.Cells[6, i + 12] = dataGridView.Columns[i + countExams + countExams1].HeaderText;
+                    // экзам
+                    for (int ai = 0; ai < countExams2; ai++)
+                    {
+                        worksheet.Cells[4, ai + 14] = subjects[ai + countExams + countExams1]; // Используем индексы строк и столбцов, начиная с 1
+                    }
+                    // фио
+                    for (int ai = 0; ai < countExams2; ai++)
+                    {
+                        worksheet.Cells[5, ai + 14] = subjects2[ai + countExams + countExams1]; // Используем индексы строк и столбцов, начиная с 1
+                    }
                 }
+
+                // практика
+                for (int i = 2; i < countExams3 + 2; i++)
+                {
+                    worksheet.Cells[6, i + 14] = dataGridView.Columns[i + countExams + countExams1 + countExams3].HeaderText;
+                    // экзам
+                    for (int ai = 0; ai < countExams3; ai++)
+                    {
+                        worksheet.Cells[4, ai + 16] = subjects[ai + countExams + countExams1 + countExams3]; // Используем индексы строк и столбцов, начиная с 1
+                    }
+                    // фио
+                    for (int ai = 0; ai < countExams3; ai++)
+                    {
+                        worksheet.Cells[5, ai + 16] = subjects2[ai + countExams + countExams1 + countExams3]; // Используем индексы строк и столбцов, начиная с 1
+                    }
+                }
+
+                // пропуски
+                for (int i = dataGridView.Columns.Count - 3; i < dataGridView.Columns.Count; i++)
+                {
+                    worksheet.Cells[5, i + 10] = dataGridView.Columns[i].HeaderText;
+                }
+
+
 
                 // Запись данных
                 for (int i = 0; i < dataGridView.Rows.Count; i++)
                 {
-                    for (int j = 0; j < dataGridView.Columns.Count; j++)
+                    // запись часов
+                    for (int j = dataGridView.Columns.Count - 3; j < dataGridView.Columns.Count; j++)
                     {
-                        worksheet.Cells[i + startRow + 1, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                        if (dataGridView.Rows[i].Cells[j].Value != null)
+                        {
+                            worksheet.Cells[i + 8, j + 10] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                        }
+                        else
+                        {
+                            // Обработка случая, когда значение ячейки равно null
+                            worksheet.Cells[i + 8, j + 10] = ""; // Или другое значение по умолчанию
+                        }
+                    }
+
+                    // 1234 и фио
+                    for (int j = 0; j < 2; j++)
+                    {
+                        worksheet.Cells[i + 8, j + 1] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                    }
+
+                    // экзамен
+                    for (int j = 3; j <= countExams + 2; j++)
+                    {
+                        worksheet.Cells[i + 8, j] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
+                    }
+
+                    // зачет
+                    for (int j = countExams + 3; j <= countExams + countExams1 + 2; j++)
+                    {
+                        worksheet.Cells[i + 8, 8] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
+                        Console.WriteLine("а: " + j.ToString());
+                    }
+
+                    // курсач
+                    for (int j = countExams + countExams1 + 3; j <= countExams + countExams1 + countExams2 + 2; j++)
+                    {
+                        worksheet.Cells[i + 8, 14] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
+                        Console.WriteLine("а: " + j.ToString());
+                    }
+
+                    // практика
+                    for (int j = countExams + countExams1 + countExams2 + 3; j <= countExams + countExams1 + countExams2 + countExams3 + 2; j++)
+                    {
+                        worksheet.Cells[i + 8, 16] = dataGridView.Rows[i].Cells[j - 1].Value.ToString();
+                        Console.WriteLine("а: " + j.ToString());
                     }
                 }
+
+
+
+                /*
                 // 11 32
                 for (int i = 11; i <= 32; i++)
                 {
@@ -447,7 +547,7 @@ namespace Vedom.Menu.List
                         // Далее ваше действие с rangeToMerge2, если ячейка B4 пуста
                     }
                 }
-
+                */
 
                 // хз
                 worksheet.Cells[6, 2].Value = "Дисциплины";
@@ -459,7 +559,7 @@ namespace Vedom.Menu.List
                 // 1 2 3 и тд
                 int columnCount = dataGridView.Columns.Count;
                 Excel.Range range1 = worksheet.Range[worksheet.Cells[7, 1], worksheet.Cells[7, columnCount]];
-                for (int i = 1; i <= columnCount; i++)
+                for (int i = 1; i <= 20; i++)
                 {
                     range1.Cells[1, i].Value = i;
                 }
@@ -639,8 +739,9 @@ namespace Vedom.Menu.List
                 range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                 range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
                 range.Columns.AutoFit();
-                range.ColumnWidth += 2;
+                // range.ColumnWidth += 2;
 
+                /*
                 // объед пропусков
                 Excel.Range range11 = worksheet.Range[worksheet.Cells[5, dataGridView.Columns.Count - 2], worksheet.Cells[6, dataGridView.Columns.Count - 2]];
                 Excel.Range range12 = worksheet.Range[worksheet.Cells[5, dataGridView.Columns.Count - 1], worksheet.Cells[6, dataGridView.Columns.Count - 1]];
@@ -659,6 +760,7 @@ namespace Vedom.Menu.List
                 range13.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
                 range14.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                 range14.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                */
 
                 // предметы UI
                 Excel.Range range15 = worksheet.Range[worksheet.Cells[6, 3], worksheet.Cells[6, dataGridView.Columns.Count - 3]];
@@ -667,72 +769,12 @@ namespace Vedom.Menu.List
                 range15.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
                 range15.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
                 range15.Columns.AutoFit();
-                range15.ColumnWidth += 2;
+                //range15.ColumnWidth += 2;
 
 
                 int endColumn = dataGridView.Columns.Count - 3; // Конечная колонка, где заканчивается поиск
-                int currentColumn;
-                void MergeCells(string valueToFind)
-                {
-                    currentColumn = 3;
-                    while (currentColumn <= endColumn)
-                    {
-                        Excel.Range cell = worksheet.Cells[4, currentColumn];
-                        if (cell.Value != null && cell.Value.ToString() == valueToFind)
-                        {
-                            // Начало объединяемого диапазона
-                            Excel.Range mergeRange = cell;
 
-                            // Ищем конец объединяемого диапазона
-                            int nextColumn = currentColumn + 1;
-                            while (nextColumn <= endColumn && worksheet.Cells[4, nextColumn].Value != null && worksheet.Cells[4, nextColumn].Value.ToString() == valueToFind)
-                            {
-                                nextColumn++;
-                            }
-                            // Конец объединяемого диапазона
-                            Excel.Range endCell = worksheet.Cells[4, nextColumn - 1];
 
-                            Excel.Range clearRange = worksheet.Range[mergeRange, endCell];
-                            clearRange.ClearContents();
-
-                            // Объединяем диапазон
-                            Excel.Range mergeRangeTotal = worksheet.Range[mergeRange, endCell];
-                            mergeRangeTotal.Merge();
-                            if (valueToFind == "Экзамен")
-                            {
-                                mergeRangeTotal.Value = "Экзаменационные\nдисциплины";
-                            }
-                            else if (valueToFind == "Зачет")
-                            {
-                                mergeRangeTotal.Value = "Зачётные\nдисциплины";
-                            }
-                            else if (valueToFind == "Курсовик")
-                            {
-                                mergeRangeTotal.Value = "Курсовой\nпроект";
-                            }
-                            else if (valueToFind == "Практика")
-                            {
-                                mergeRangeTotal.Value = "Практики";
-                            }
-                            mergeRangeTotal.RowHeight = 34;
-                            mergeRangeTotal.ColumnWidth = 9;
-
-                            mergeRangeTotal.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                            mergeRangeTotal.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-                            // Переходим к следующей ячейке
-                            currentColumn = nextColumn;
-                        }
-                        else
-                        {
-                            // Переходим к следующей ячейке
-                            currentColumn++;
-                        }
-                    }
-                }
-                MergeCells("Экзамен"); // объединение ячеек для "Экзамен"
-                MergeCells("Зачет"); // объединение ячеек для "зачет"
-                MergeCells("Курсовик"); // объединение ячеек для "зачет"
-                MergeCells("Практика"); // объединение ячеек для "зачет"
 
 
                 Excel.Range r1 = worksheet.Range[worksheet.Cells[5, 1], worksheet.Cells[6, 2]];
