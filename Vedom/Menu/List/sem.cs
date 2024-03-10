@@ -14,6 +14,8 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Reflection;
+using System.Threading;
 
 namespace Vedom.Menu.List
 {
@@ -311,7 +313,7 @@ namespace Vedom.Menu.List
         }
 
 
-
+        int Printer = 0;
         private void ExportToExcel(DataGridView dataGridView, string fileName)
         {
             string studentsSheetName = "студенты"; // исправлено
@@ -808,6 +810,24 @@ namespace Vedom.Menu.List
                 Excel.Range rangeRow1 = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[3, 1]];
                 rangeRow.RowHeight = 19;
 
+                // печать и тд
+                Excel.Range rangePrint = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[45по, 20]];
+                worksheet.PageSetup.PrintArea = rangePrint.Address;
+
+                worksheet.PageSetup.LeftMargin = excelApp.InchesToPoints(0.5);
+                worksheet.PageSetup.RightMargin = excelApp.InchesToPoints(0.5);
+                worksheet.PageSetup.TopMargin = excelApp.InchesToPoints(0.5);
+                worksheet.PageSetup.BottomMargin = excelApp.InchesToPoints(0.5);
+
+                // Установить масштаб для вписывания листа на одну страницу
+                worksheet.PageSetup.FitToPagesWide = 1;
+                worksheet.PageSetup.FitToPagesTall = 1;
+
+                if (Printer == 1)
+                {
+                    worksheet.PrintOutEx();
+                }
+
                 // удаляем пустые листы
                 foreach (Excel.Worksheet sheet in workbook.Sheets)
                 {
@@ -833,38 +853,10 @@ namespace Vedom.Menu.List
         private void print_Click(object sender, EventArgs e)
         {
             string fileName = "vedom.xlsx";
+            Printer = 1;
             ExportToExcel(dataGridView1, fileName);
-
-
-            string excelFilePath = "vedom.xlsx";
-            // Название листа
-            string sheetName = "Ведомость семестр №" + Properties.Settings.Default.semsestSave;
-
-            // Создание объекта приложения Excel
-            Excel.Application excelApp = new Excel.Application();
-            // Открытие книги Excel
-            Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(excelFilePath);
-            // Получение листа по имени
-            Excel.Worksheet excelWorksheet = excelWorkbook.Sheets[sheetName];
-
-            // Установка области печати
-            Excel.Range printRange = excelWorksheet.UsedRange;
-
-            // Установка масштаба печати
-            excelWorksheet.PageSetup.Zoom = false;
-            excelWorksheet.PageSetup.FitToPagesWide = 1; // 1 страница по ширине
-            excelWorksheet.PageSetup.FitToPagesTall = false; // Не подгонять по высоте
-
-            // Явное сохранение книги перед печатью
-            excelWorkbook.Save();
-
-            // Печать всего содержимого листа
-            printRange.PrintOutEx();
-
-            // Закрытие книги Excel
-            excelWorkbook.Close(false);
-            // Закрытие приложения Excel
-            excelApp.Quit();
+            Thread.Sleep(2000);
+            Printer = 0;
         }
     }
 }

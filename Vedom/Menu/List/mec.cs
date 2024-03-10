@@ -14,6 +14,7 @@ using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Globalization;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Vedom.Menu.List
 {
@@ -65,7 +66,6 @@ namespace Vedom.Menu.List
 
         private void LoadDataFromExcel(string selectedMonthYear)
         {
-
             dataGridView1.Visible = false;
             label1.Visible = true;
             string fileName = "vedom.xlsx";
@@ -251,9 +251,6 @@ namespace Vedom.Menu.List
             return false;
         }
 
-
-
-
         private void ClearDataGridView()
         {
             // Установка источника данных в null перед очисткой
@@ -279,6 +276,7 @@ namespace Vedom.Menu.List
             ExportToExcel(dataGridView1, fileName);
         } // 
 
+        int Printer = 0;
         private void ExportToExcel(DataGridView dataGridView, string fileName)
         {
 
@@ -449,7 +447,7 @@ namespace Vedom.Menu.List
                 }
                 for (int i = dataGridView.Columns.Count - 3; i < dataGridView.Columns.Count; i++)
                 {
-                    worksheet.Cells[4, i + 11] = dataGridView.Columns[i].HeaderText;
+                    worksheet.Cells[4, i + 18 - dataGridView.Columns.Count + 3] = dataGridView.Columns[i].HeaderText;
                 }
 
                 // Запись данных
@@ -471,12 +469,12 @@ namespace Vedom.Menu.List
                     {
                         if (dataGridView.Rows[i].Cells[j].Value != null)
                         {
-                            worksheet.Cells[i + 5, j + 16 - 5] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                            worksheet.Cells[i + 5, j + 18 - dataGridView.Columns.Count + 3] = dataGridView.Rows[i].Cells[j].Value.ToString();
                         }
                         else
                         {
                             // Обработка случая, когда значение ячейки равно null
-                            worksheet.Cells[i + 5, j + 16 - 5] = ""; // Или другое значение по умолчанию
+                            worksheet.Cells[i + 5, j + 18 - dataGridView.Columns.Count + 3] = ""; // Или другое значение по умолчанию
                         }
                     }
                 }
@@ -651,6 +649,23 @@ namespace Vedom.Menu.List
                 Excel.Range rangeRow = worksheet.Range[worksheet.Cells[5, 2], worksheet.Cells[41, 20]];
                 rangeRow.RowHeight = 19;
 
+                // печать и тд
+                Excel.Range rangePrint = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[41, 20]];
+                worksheet.PageSetup.PrintArea = rangePrint.Address;
+
+                worksheet.PageSetup.LeftMargin = excelApp.InchesToPoints(0.5);
+                worksheet.PageSetup.RightMargin = excelApp.InchesToPoints(0.5);
+                worksheet.PageSetup.TopMargin = excelApp.InchesToPoints(0.5);
+                worksheet.PageSetup.BottomMargin = excelApp.InchesToPoints(0.5);
+
+                // Установить масштаб для вписывания листа на одну страницу
+                worksheet.PageSetup.FitToPagesWide = 1;
+                worksheet.PageSetup.FitToPagesTall = 1;
+
+                if (Printer == 1)
+                {
+                    worksheet.PrintOutEx();
+                }
 
                 // удаляем пустые листы
                 foreach (Excel.Worksheet sheet in workbook.Sheets)
@@ -675,6 +690,8 @@ namespace Vedom.Menu.List
             }
         }
 
+
+
         private void dateTimePicker1_Leave(object sender, EventArgs e)
         {
             DateTime selectedDate = dateTimePicker1.Value;
@@ -682,56 +699,13 @@ namespace Vedom.Menu.List
             LoadDataFromExcel(selectedMonthYear);
         }
 
-
         private void print_Click(object sender, EventArgs e)
         {
             string fileName = "vedom.xlsx";
+            Printer = 1;
             ExportToExcel(dataGridView1, fileName);
-
-            DateTime selectedDate = dateTimePicker1.Value;
-            string selectedMonthYear = selectedDate.ToString("MMMM yyyy");
-            string excelFilePath = "vedom.xlsx";
-            // Название листа
-            string sheetName = "Ведомость " + selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU")) + " " + Properties.Settings.Default.semsestSave;
-            // Создание объекта приложения Excel
-            Excel.Application excelApp = new Excel.Application();
-            // Открытие книги Excel
-            Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(excelFilePath);
-            // Получение листа по имени
-            Excel.Worksheet excelWorksheet = excelWorkbook.Sheets[sheetName];
-            // Формирование диапазона от A1 до последнего столбца
-            Excel.Range excelRange = excelWorksheet.UsedRange; // Используем все заполненные ячейки в таблице
-
-            // Автоматическая подгонка размеров страницы по содержимому
-            excelRange.Columns.AutoFit();
-            excelRange.Rows.AutoFit();
-
-            // Установить ширину страницы равной ширине диапазона данных
-            excelWorksheet.PageSetup.Zoom = false;
-            excelWorksheet.PageSetup.FitToPagesWide = 1;
-            excelWorksheet.PageSetup.FitToPagesTall = 1;
-
-
-            for (int i = 5; i <= excelRange.Rows.Count; i++)
-            {
-                excelWorksheet.Rows[i].RowHeight = 24;
-            }
-
-            // Установить узкие поля
-            excelWorksheet.PageSetup.LeftMargin = excelApp.InchesToPoints(0.2);
-            excelWorksheet.PageSetup.RightMargin = excelApp.InchesToPoints(0.2);
-            excelWorksheet.PageSetup.TopMargin = excelApp.InchesToPoints(0.2);
-            excelWorksheet.PageSetup.BottomMargin = excelApp.InchesToPoints(0.2);
-
-
-
-            // Печать всего листа
-            excelRange.PrintOutEx(Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-                Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-            // Закрытие книги Excel
-            excelWorkbook.Close(false);
-            // Закрытие приложения Excel
-            excelApp.Quit();
+            Thread.Sleep(2000);
+            Printer = 0;
         }
     }
 }
