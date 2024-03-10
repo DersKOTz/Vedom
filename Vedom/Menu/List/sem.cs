@@ -215,10 +215,13 @@ namespace Vedom.Menu.List
                     double respectfulSum = respectfulValues.Sum();
                     double disrespectfulSum = disrespectfulValues.Sum();
 
-                    // Присваиваем суммы соответствующим столбцам
-                    row["Всего"] = totalSum;
-                    row["Уваж."] = respectfulSum;
-                    row["Неуваж."] = disrespectfulSum;
+
+                    if (!string.IsNullOrEmpty(row["ФИО"] as string))
+                    {
+                        row["Всего"] = totalSum;
+                        row["Уваж."] = respectfulSum;
+                        row["Неуваж."] = disrespectfulSum;
+                    }
 
 
 
@@ -455,23 +458,25 @@ namespace Vedom.Menu.List
                 // практика
                 for (int i = 2; i < countExams3 + 2; i++)
                 {
-                    worksheet.Cells[6, i + 14] = dataGridView.Columns[i + countExams + countExams1 + countExams3].HeaderText;
+                    worksheet.Cells[6, i + 14] = dataGridView.Columns[i + countExams + countExams1 + countExams2].HeaderText;
                     // экзам
                     for (int ai = 0; ai < countExams3; ai++)
                     {
-                        worksheet.Cells[4, ai + 16] = subjects[ai + countExams + countExams1 + countExams3]; // Используем индексы строк и столбцов, начиная с 1
+                        Console.WriteLine(ai + 16);
+                        Console.WriteLine(ai + countExams + countExams1 + countExams2);
+                        worksheet.Cells[4, ai + 16] = subjects[ai + countExams + countExams1 + countExams2]; // Используем индексы строк и столбцов, начиная с 1
                     }
                     // фио
                     for (int ai = 0; ai < countExams3; ai++)
                     {
-                        worksheet.Cells[5, ai + 16] = subjects2[ai + countExams + countExams1 + countExams3]; // Используем индексы строк и столбцов, начиная с 1
+                        worksheet.Cells[5, ai + 16] = subjects2[ai + countExams + countExams1 + countExams2]; // Используем индексы строк и столбцов, начиная с 1
                     }
                 }
 
                 // пропуски
                 for (int i = dataGridView.Columns.Count - 3; i < dataGridView.Columns.Count; i++)
                 {
-                    worksheet.Cells[5, i + 11] = dataGridView.Columns[i].HeaderText;
+                    worksheet.Cells[5, i + 18 + 6 - dataGridView.ColumnCount - 3] = dataGridView.Columns[i].HeaderText;
                 }
 
 
@@ -484,12 +489,12 @@ namespace Vedom.Menu.List
                     {
                         if (dataGridView.Rows[i].Cells[j].Value != null)
                         {
-                            worksheet.Cells[i + 8, j + 11] = dataGridView.Rows[i].Cells[j].Value.ToString();
+                            worksheet.Cells[i + 8, j + 18 + 6 - dataGridView.ColumnCount - 3] = dataGridView.Rows[i].Cells[j].Value.ToString();
                         }
                         else
                         {
                             // Обработка случая, когда значение ячейки равно null
-                            worksheet.Cells[i + 8, j + 11] = ""; // Или другое значение по умолчанию
+                            worksheet.Cells[i + 8, j + 18 + 6 - dataGridView.ColumnCount - 3] = ""; // Или другое значение по умолчанию
                         }
                     }
 
@@ -527,23 +532,6 @@ namespace Vedom.Menu.List
 
 
 
-                // 11 32
-                for (int i = 11; i <= 32; i++)
-                {
-                    Excel.Range cellB4 = worksheet.Cells[i, 2]; // 4 - номер строки, 2 - номер столбца (B)
-                    object cellValue = cellB4.Value;
-
-                    // Проверка, является ли ячейка B4 пустой
-                    if (cellValue == null || string.IsNullOrEmpty(cellValue.ToString()))
-                    {
-                        // Ваш код, выполняемый, если ячейка B4 пуста
-                        int lastColumn = dataGridView1.Columns.Count;
-                        int startColumn = lastColumn - 2;
-                        Excel.Range rangeToMerge2 = worksheet.Range[worksheet.Cells[i, startColumn], worksheet.Cells[i, lastColumn]];
-                        rangeToMerge2.Value = "";
-                        // Далее ваше действие с rangeToMerge2, если ячейка B4 пуста
-                    }
-                }
 
 
                 // хз
@@ -560,7 +548,6 @@ namespace Vedom.Menu.List
                 {
                     range1.Cells[1, i].Value = i;
                 }
-                range1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                 // всего часов
                 Excel.Range rangeToMerge5 = worksheet.Range[worksheet.Cells[33, 1], worksheet.Cells[33, 17]];
@@ -585,9 +572,6 @@ namespace Vedom.Menu.List
                 worksheet.Cells[33, 20].Value = n;
 
 
-
-
-
                 // всего в группе
                 Excel.Range rangeToMerge6 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[35, 3]];
                 rangeToMerge6.Merge();
@@ -607,95 +591,87 @@ namespace Vedom.Menu.List
                 }
                 worksheet.Cells[35, 4].Value = fioCount;
 
-
                 // колво неусп
                 Excel.Range rangeToMerge7 = worksheet.Range[worksheet.Cells[36, 1], worksheet.Cells[36, 3]];
                 rangeToMerge7.Merge();
                 rangeToMerge7.Value = "Количество неуспевающих";
-                int[] kolvoArray = new int[25]; // Создаем массив для хранения значений kolvo для каждой строки
-                Excel.Range neysp = worksheet.Range[worksheet.Cells[8, 2], worksheet.Cells[32, 2]]; // Используем строки с 5 по 29
-                int rowIndex = 0; // Индекс текущей строки в массиве kolvoArray
-                foreach (Excel.Range cell in neysp)
-                {
-                    if (cell.Value != null && cell.Value.ToString() != "")
-                    {
-                        int kolvo = 0; // Значение kolvo для текущей строки
+                int totalKolvo = 0;
+                // Указываем столбцы, в которых нужно произвести поиск (от третьего до предпоследнего)
+                int startColumnIndex = 2; // Нумерация столбцов начинается с 0
+                int endColumnIndex = dataGridView.ColumnCount - 4; // -3, так как индексация начинается с 0 и вычитаем еще 1, чтобы не включать последний столбец
 
-                        Excel.Range innerRange = worksheet.Range[worksheet.Cells[cell.Row, 3], worksheet.Cells[cell.Row, dataGridView.Columns.Count - 3]];
-                        foreach (Excel.Range innerCell in innerRange)
+                // Проходимся по всем строкам DataGridView
+                foreach (DataGridViewRow row in dataGridView.Rows)
+                {
+                    // Массив для хранения уникальных значений "2" и "null"
+                    bool found2 = false;
+                    bool foundNull = false;
+
+                    // Проходимся по столбцам, начиная с указанного и заканчивая указанным
+                    for (int columnIndex = startColumnIndex; columnIndex <= endColumnIndex; columnIndex++)
+                    {
+                        // Получаем значение ячейки
+                        object cellValue = row.Cells[columnIndex].Value;
+
+                        // Проверяем, соответствует ли значение "2" или "null"
+                        if (cellValue != null)
                         {
-                            if (innerCell.Value == null || innerCell.Value.ToString() == "2")
+                            if (cellValue.ToString() == "2" && !found2)
                             {
-                                kolvo = 1; // Если найдена двойка или ячейка пуста, устанавливаем kolvo в 1
-                                break; // Прерываем цикл, так как условие уже выполнено
+                                found2 = true;
+                                totalKolvo++;
+                            }
+                            else if (cellValue.ToString().ToLower() == "null" && !foundNull)
+                            {
+                                foundNull = true;
+                                totalKolvo++;
                             }
                         }
-                        kolvoArray[rowIndex] = kolvo; // Сохраняем значение kolvo для текущей строки
-                        rowIndex++; // Переходим к следующей строке
                     }
-                }
-                int totalKolvo = 0;
-                foreach (int kolvoValue in kolvoArray)
-                {
-                    totalKolvo += kolvoValue;
                 }
                 worksheet.Cells[36, 4].Value = totalKolvo;
 
-                Array.Clear(kolvoArray, 0, kolvoArray.Length);
-                rowIndex = 0;
 
-
-                // колво на 4 и 5
+                // колво 4/5
                 Excel.Range rangeToMerge8 = worksheet.Range[worksheet.Cells[37, 1], worksheet.Cells[37, 3]];
                 rangeToMerge8.Merge();
                 rangeToMerge8.Value = "Количество успевающих на 4 и 5";
+                totalKolvo = 0;
+                // Указываем столбцы, в которых нужно произвести поиск (от третьего до предпоследнего)
+                startColumnIndex = 2; // Нумерация столбцов начинается с 0
+                endColumnIndex = dataGridView.ColumnCount - 4; // -3, так как индексация начинается с 0 и вычитаем еще 1, чтобы не включать последний столбец
 
-                int totalKolvo1 = 0; // Переменная для подсчета количества успевающих на оценках 4, 5 и "+"
-                foreach (Excel.Range cell in neysp)
+                // Проходимся по всем строкам DataGridView
+                foreach (DataGridViewRow row in dataGridView.Rows)
                 {
-                    if (cell.Value != null && cell.Value.ToString() != "")
+                    // Массив для хранения присутствия значений "4", "5" или "зач"
+                    bool found456 = false;
+                    bool found23 = false;
+
+                    // Проходимся по столбцам, начиная с указанного и заканчивая указанным
+                    for (int columnIndex = startColumnIndex; columnIndex <= endColumnIndex; columnIndex++)
                     {
-                        int kolvo = 0; // Значение kolvo для текущей строки
-                        Excel.Range innerRange = worksheet.Range[worksheet.Cells[cell.Row, 3], worksheet.Cells[cell.Row, dataGridView.Columns.Count - 3]];
+                        // Получаем значение ячейки
+                        object cellValue = row.Cells[columnIndex].Value;
 
-                        bool containsEmptyValue = false; // Флаг для обнаружения пустых значений в диапазоне
-
-                        // Проверяем, что внутренний диапазон не пустой и не содержит пустых значений
-                        foreach (Excel.Range innerCell in innerRange)
+                        // Проверяем, соответствует ли значение "4", "5" или "зач"
+                        if (cellValue != null && (cellValue.ToString() == "4" || cellValue.ToString() == "5" || cellValue.ToString() == "зач"))
                         {
-                            if (innerCell.Value == null || string.IsNullOrWhiteSpace(innerCell.Value.ToString()))
-                            {
-                                containsEmptyValue = true;
-                                break;
-                            }
+                            found456 = true;
                         }
-
-                        // Если в диапазоне есть пустые значения, пропускаем эту строку
-                        if (containsEmptyValue)
-                            continue;
-
-                        bool containsOnlyFourFiveAndPlus = true;
-                        foreach (Excel.Range innerCell in innerRange)
+                        else if (cellValue != null && (cellValue.ToString() == "2" || cellValue.ToString() == "3"))
                         {
-                            if (innerCell.Value != null && !string.IsNullOrWhiteSpace(innerCell.Value.ToString()))
-                            {
-                                string valueStr = innerCell.Value.ToString();
-                                if (valueStr != "4" && valueStr != "5" && valueStr != "зач")
-                                {
-                                    containsOnlyFourFiveAndPlus = false;
-                                    break;
-                                }
-                            }
+                            found23 = true;
                         }
-                        if (containsOnlyFourFiveAndPlus)
-                        {
-                            kolvo = 1; // Если все значения в строке - только 4, 5 или "+", устанавливаем kolvo в 1
-                        }
+                    }
 
-                        totalKolvo1 += kolvo; // Добавляем кол-во успевающих на оценках 4, 5 и "+" в общий счетчик
+                    // Если найдено хотя бы одно из значений "4", "5" или "зач", и не найдены "2" и "3", увеличиваем totalKolvo на 1
+                    if (found456 && !found23)
+                    {
+                        totalKolvo++;
                     }
                 }
-                worksheet.Cells[37, 4].Value = totalKolvo1;
+                worksheet.Cells[37, 4].Value = totalKolvo;
 
 
                 // абс усп
@@ -727,7 +703,7 @@ namespace Vedom.Menu.List
                 Excel.Range rangeToMerge11 = worksheet.Range[worksheet.Cells[40, 1], worksheet.Cells[40, 3]];
                 rangeToMerge11.Merge();
                 rangeToMerge11.Value = "Прогулы на 1 человека час";
-                worksheet.Cells[40, 4].Value = Math.Round(Convert.ToDouble(worksheet.Cells[33, startColumn1 + 2].Value) / Convert.ToDouble(worksheet.Cells[35, 4].Value), 1);
+                worksheet.Cells[40, 4].Value = Math.Round(Convert.ToDouble(worksheet.Cells[33, 20].Value) / Convert.ToDouble(worksheet.Cells[35, 4].Value), 1);
 
 
                 // предметы чето там
@@ -767,24 +743,70 @@ namespace Vedom.Menu.List
                 rangeToMerge14.Merge();
                 rangeToMerge14.Value = Properties.Settings.Default.kurs + " курс за " + "_" + Properties.Settings.Default.semsestSave + "_" + " семестр " + Properties.Settings.Default.years + " учебного года";
 
-                //рапмки
+
+
+                worksheet.Cells[42, 13].Value = "Заведующий " + Properties.Settings.Default.fak + " _________________";
+                worksheet.Cells[43, 13].Value = "Классный руководитель ___________________";
+                worksheet.Cells[44, 13].Value = "Староста ________________________________";
+
+                worksheet.Columns[1].AutoFit();
+                worksheet.Columns[2].AutoFit();
+
+                Excel.Range rangeToMerge15 = worksheet.Range[worksheet.Cells[4, 3], worksheet.Cells[4, 7]];
+                rangeToMerge15.Clear();
+                rangeToMerge15.Merge();
+                rangeToMerge15.Value = "Экзаменационные\nдисциплины";
+
+                Excel.Range rangeToMerge16 = worksheet.Range[worksheet.Cells[4, 8], worksheet.Cells[4, 13]];
+                rangeToMerge16.Clear();
+                rangeToMerge16.Merge();
+                rangeToMerge16.Value = "Зачётные дисциплины";
+
+                Excel.Range rangeToMerge17 = worksheet.Range[worksheet.Cells[4, 14], worksheet.Cells[4, 15]];
+                rangeToMerge17.Clear();
+                rangeToMerge17.Merge();
+                rangeToMerge17.Value = "Курсовой\nпроект";
+
+                Excel.Range rangeToMerge18 = worksheet.Range[worksheet.Cells[4, 16], worksheet.Cells[4, 17]];
+                rangeToMerge18.Clear();
+                rangeToMerge18.Merge();
+                rangeToMerge18.Value = "Практики";
+
+                // прочие
+                worksheet.Rows[4].RowHeight = 33;
+                worksheet.Cells[35, 4].ColumnWidth = 5;
+                Excel.Range allHB = worksheet.Range[worksheet.Cells[4, 1], worksheet.Cells[7, 20]];
+                Excel.Range allHB2 = worksheet.Range[worksheet.Cells[8, 3], worksheet.Cells[32, 17]];
+                Excel.Range allHB3 = worksheet.Range[worksheet.Cells[8, 18], worksheet.Cells[33, 20]];
+
+                // рапмки
                 Excel.Range rangeRama = worksheet.Range[worksheet.Cells[4, 1], worksheet.Cells[33, 20]];
                 rangeRama.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 rangeRama.Borders.Weight = Excel.XlBorderWeight.xlThin;
+
+                // доп рама
+                Excel.Range Rang3 = worksheet.Range[worksheet.Cells[35, 4], worksheet.Cells[40, 4]];
+                Rang3.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                 Excel.Range rangeRama1 = worksheet.Range[worksheet.Cells[35, 1], worksheet.Cells[40, 4]];
                 rangeRama1.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
                 rangeRama1.Borders.Weight = Excel.XlBorderWeight.xlThin;
 
-                worksheet.Cells[42, 5].Value = "Заведующий " + Properties.Settings.Default.fak + " _________________";
-                worksheet.Cells[43, 5].Value = "Классный руководитель ___________________";
-                worksheet.Cells[44, 5].Value = "Староста ________________________________";
+                // центр
+                allHB.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                allHB2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                allHB3.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                allHB.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                allHB2.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                allHB3.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
 
-                worksheet.Columns[1].AutoFit();
+                // строки ширина
+                Excel.Range rangeRow = worksheet.Range[worksheet.Cells[8, 1], worksheet.Cells[45, 20]];
+                rangeRow.RowHeight = 19;
 
-                // доп
-                Excel.Range Rang3 = worksheet.Range[worksheet.Cells[35, 4], worksheet.Cells[40, 4]];
-                Rang3.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                // строки ширина
+                Excel.Range rangeRow1 = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[3, 1]];
+                rangeRow.RowHeight = 19;
 
                 // удаляем пустые листы
                 foreach (Excel.Worksheet sheet in workbook.Sheets)
@@ -817,28 +839,28 @@ namespace Vedom.Menu.List
             string excelFilePath = "vedom.xlsx";
             // Название листа
             string sheetName = "Ведомость семестр №" + Properties.Settings.Default.semsestSave;
+
             // Создание объекта приложения Excel
             Excel.Application excelApp = new Excel.Application();
             // Открытие книги Excel
             Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(excelFilePath);
             // Получение листа по имени
             Excel.Worksheet excelWorksheet = excelWorkbook.Sheets[sheetName];
-            int lastColumnIndex = dataGridView1.Columns.Count;
-            // Если количество столбцов меньше 10, установите lastColumnIndex на 10
-            if (lastColumnIndex < 10)
-            {
-                lastColumnIndex = 10;
-            }
-            // Формирование диапазона от A1 до последнего столбца
-            Excel.Range excelRange = excelWorksheet.Range["A1", excelWorksheet.Cells[45, lastColumnIndex]];
 
-            // Вписать лист на одну страницу
-            excelWorksheet.PageSetup.FitToPagesWide = 1;
-            excelWorksheet.PageSetup.FitToPagesTall = 1;
+            // Установка области печати
+            Excel.Range printRange = excelWorksheet.UsedRange;
 
-            // Печать всего листа
-            excelRange.PrintOutEx(Type.Missing, Type.Missing, Type.Missing, Type.Missing,
-                Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            // Установка масштаба печати
+            excelWorksheet.PageSetup.Zoom = false;
+            excelWorksheet.PageSetup.FitToPagesWide = 1; // 1 страница по ширине
+            excelWorksheet.PageSetup.FitToPagesTall = false; // Не подгонять по высоте
+
+            // Явное сохранение книги перед печатью
+            excelWorkbook.Save();
+
+            // Печать всего содержимого листа
+            printRange.PrintOutEx();
+
             // Закрытие книги Excel
             excelWorkbook.Close(false);
             // Закрытие приложения Excel
