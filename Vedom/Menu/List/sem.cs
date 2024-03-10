@@ -811,7 +811,7 @@ namespace Vedom.Menu.List
                 rangeRow.RowHeight = 19;
 
                 // печать и тд
-                Excel.Range rangePrint = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[45по, 20]];
+                Excel.Range rangePrint = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[45, 20]];
                 worksheet.PageSetup.PrintArea = rangePrint.Address;
 
                 worksheet.PageSetup.LeftMargin = excelApp.InchesToPoints(0.5);
