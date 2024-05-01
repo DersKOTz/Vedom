@@ -141,7 +141,7 @@ namespace Vedom.Menu.List
 
                 }
 
-                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
 
                 dataGridView1.Columns[0].Width = 30;
                 for (int j = 2; j <= dataGridView1.ColumnCount - 1; j++)
@@ -328,7 +328,8 @@ namespace Vedom.Menu.List
 
                     }
 
-                    worksheet.Rows[28].Value = $"Ведомость посещаемости студентов по группе {Properties.Settings.Default.group} за {selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"))}";
+                    worksheet.Cells[28, 1].Value = $"Ведомость посещаемости студентов по группе {Properties.Settings.Default.group} за {selectedDate.ToString("MMMM yyyy", CultureInfo.CreateSpecificCulture("ru-RU"))}";
+                    worksheet.Cells[28, 1].Font.Size = 14;
 
                     Excel.Range rangeRama = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[26, 36]];
                     rangeRama.Borders.LineStyle = Excel.XlLineStyle.xlContinuous;
@@ -338,7 +339,7 @@ namespace Vedom.Menu.List
                     Excel.Range rangeRama1 = worksheet.Range[worksheet.Cells[1, 3], worksheet.Cells[26, 33]];
                     rangeRama1.ColumnWidth = 4;
                     rangeRama1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-                    worksheet.Columns[1].AutoFit();
+                    worksheet.Cells[1, 1].ColumnWidth = 4;
                     worksheet.Columns[2].AutoFit();
                     rangeRama1.ColumnWidth = 4;
 
@@ -350,7 +351,7 @@ namespace Vedom.Menu.List
                     rangeRama2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
 
                     // печать и тд
-                    Excel.Range rangePrint = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[26, 38]];
+                    Excel.Range rangePrint = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[28, 36]];
                     worksheet.PageSetup.PrintArea = rangePrint.Address;
                     worksheet.PageSetup.Orientation = Excel.XlPageOrientation.xlLandscape;
 

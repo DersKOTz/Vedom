@@ -36,89 +36,105 @@ namespace Vedom.Menu.List
 
             try
             {
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-
-                // Проверяем существует ли файл
-                if (!File.Exists(filePath))
+                try
                 {
-                    // Если файл не существует, создаем новый
-                    workbook = excelApp.Workbooks.Add();
-                    workbook.SaveAs(filePath);
-                }
-                else
-                {
-                    workbook = excelApp.Workbooks.Open(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
-            }
+                    string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-            if (workbook != null)
-            {
-                Excel.Worksheet worksheet = null;
-
-                // Проверяем существует ли лист "студенты"
-                bool studentsSheetExists = false;
-                foreach (Excel.Worksheet sheet in workbook.Sheets)
-                {
-                    if (sheet.Name == studentsSheetName)
+                    // Проверяем существует ли файл
+                    if (!File.Exists(filePath))
                     {
-                        worksheet = sheet;
-                        studentsSheetExists = true;
-                        break;
+                        // Если файл не существует, создаем новый
+                        workbook = excelApp.Workbooks.Add();
+                        workbook.SaveAs(filePath);
+                    }
+                    else
+                    {
+                        workbook = excelApp.Workbooks.Open(filePath);
                     }
                 }
-
-                // Если лист "студенты" не существует, создаем его
-                if (!studentsSheetExists)
+                catch (Exception ex)
                 {
-                    worksheet = workbook.Sheets.Add();
-                    worksheet.Name = studentsSheetName;
-                    workbook.Save(); // Сохраняем изменения в файле
+                    MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
                 }
 
-                if (worksheet != null)
+                if (workbook != null)
                 {
-                    // Создаем DataTable для хранения данных
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add("№");
-                    dt.Columns.Add("ФИО");
+                    Excel.Worksheet worksheet = null;
 
-                    // Загружаем данные из листа Excel в DataTable
-                    for (int i = 2; i <= worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
+                    // Проверяем существует ли лист "студенты"
+                    bool studentsSheetExists = false;
+                    foreach (Excel.Worksheet sheet in workbook.Sheets)
                     {
-                        DataRow row = dt.NewRow();
-                        row["№"] = worksheet.Cells[i, 1].Value;
-                        row["ФИО"] = worksheet.Cells[i, 2].Value;
-                        dt.Rows.Add(row);
+                        if (sheet.Name == studentsSheetName)
+                        {
+                            worksheet = sheet;
+                            studentsSheetExists = true;
+                            break;
+                        }
                     }
 
-                    // Отображаем данные в DataGridView
-                    dataGridView1.DataSource = dt;
-                    dataGridView1.Columns["ФИО"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    // Если лист "студенты" не существует, создаем его
+                    if (!studentsSheetExists)
+                    {
+                        worksheet = workbook.Sheets.Add();
+                        worksheet.Name = studentsSheetName;
+                        workbook.Save(); // Сохраняем изменения в файле
+                    }
+
+                    if (worksheet != null)
+                    {
+                        // Создаем DataTable для хранения данных
+                        DataTable dt = new DataTable();
+                        dt.Columns.Add("№");
+                        dt.Columns.Add("ФИО");
+
+                        // Загружаем данные из листа Excel в DataTable
+                        for (int i = 2; i <= worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
+                        {
+                            DataRow row = dt.NewRow();
+                            row["№"] = worksheet.Cells[i, 1].Value;
+                            row["ФИО"] = worksheet.Cells[i, 2].Value;
+                            dt.Rows.Add(row);
+                        }
+
+                        // Отображаем данные в DataGridView
+                        dataGridView1.DataSource = dt;
+                        dataGridView1.Columns["ФИО"].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    }
+
+                    
                 }
+               
+                dataGridView1.Columns[0].Width = 30;
+
+                if (Properties.Settings.Default.dop1 == 0)
+                {
+                    save1();
+                    Properties.Settings.Default.dop1 = 1;
+                    Properties.Settings.Default.Save();
+                    LoadDataFromExcel();
+                }
+
+                dataGridView1.Visible = true;
+                label1.Visible = false;
+                dataGridView1.AllowUserToAddRows = false;
 
                 workbook.Save();
                 workbook.Close();
                 excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
             }
-
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
-            dataGridView1.Columns[0].Width = 30;
-
-            if (Properties.Settings.Default.dop1 == 0)
+            catch (Exception ex)
             {
-                save1();
-                Properties.Settings.Default.dop1 = 1;
-                Properties.Settings.Default.Save();
-                LoadDataFromExcel();
-            }
+                MessageBox.Show($"Ошибка при открытии файла: {ex.Message}\n попробуйте еще раз!");
+                workbook.Save();
+                workbook.Close();
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
 
-            dataGridView1.Visible = true;
-            label1.Visible = false;
-            dataGridView1.AllowUserToAddRows = false;
+            }
         }
 
 
@@ -137,80 +153,94 @@ namespace Vedom.Menu.List
 
             try
             {
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+                try
+                {
+                    string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-                // Проверяем существует ли файл
-                if (!File.Exists(filePath))
-                {
-                    // Если файл не существует, создаем новый
-                    workbook = excelApp.Workbooks.Add();
-                    workbook.SaveAs(filePath);
+                    // Проверяем существует ли файл
+                    if (!File.Exists(filePath))
+                    {
+                        // Если файл не существует, создаем новый
+                        workbook = excelApp.Workbooks.Add();
+                        workbook.SaveAs(filePath);
+                    }
+                    else
+                    {
+                        workbook = excelApp.Workbooks.Open(filePath);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    workbook = excelApp.Workbooks.Open(filePath);
+                    MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
                 }
+
+                if (workbook != null)
+                {
+                    Excel.Worksheet worksheet = null;
+
+                    // Проверяем существует ли лист "студенты"
+                    bool studentsSheetExists = false;
+                    foreach (Excel.Worksheet sheet in workbook.Sheets)
+                    {
+                        if (sheet.Name == studentsSheetName)
+                        {
+                            worksheet = sheet;
+                            studentsSheetExists = true;
+                            break;
+                        }
+                    }
+
+                    // Если лист "студенты" не существует, создаем его
+                    if (!studentsSheetExists)
+                    {
+                        worksheet = workbook.Sheets.Add();
+                        worksheet.Name = studentsSheetName;
+                        workbook.Save(); // Сохраняем изменения в файле
+                    }
+
+                    worksheet.Cells[1, 1] = "№";
+                    worksheet.Cells[1, 2] = "ФИО";
+
+                    if (worksheet != null)
+                    {
+                        // Заполняем столбец "№" от 1 до 25
+                        for (int i = 1; i <= 25; i++)
+                        {
+                            worksheet.Cells[i + 1, 1] = i;
+                        }
+
+                        // Получаем данные из DataGridView
+                        DataTable dt = (DataTable)dataGridView1.DataSource;
+
+                        // Записываем данные в столбец "ФИО"
+                        for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            worksheet.Cells[i + 2, 2] = dt.Rows[i]["ФИО"];
+                        }
+
+                        // Сохраняем изменения в файле
+                       
+                    }
+
+
+                }
+
+                workbook.Save();
+                workbook.Close();
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+                MessageBox.Show("Данные сохранены в Excel файл!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
-            }
-
-            if (workbook != null)
-            {
-                Excel.Worksheet worksheet = null;
-
-                // Проверяем существует ли лист "студенты"
-                bool studentsSheetExists = false;
-                foreach (Excel.Worksheet sheet in workbook.Sheets)
-                {
-                    if (sheet.Name == studentsSheetName)
-                    {
-                        worksheet = sheet;
-                        studentsSheetExists = true;
-                        break;
-                    }
-                }
-
-                // Если лист "студенты" не существует, создаем его
-                if (!studentsSheetExists)
-                {
-                    worksheet = workbook.Sheets.Add();
-                    worksheet.Name = studentsSheetName;
-                    workbook.Save(); // Сохраняем изменения в файле
-                }
-
-                worksheet.Cells[1, 1] = "№";
-                worksheet.Cells[1, 2] = "ФИО";
-
-                if (worksheet != null)
-                {
-                    // Заполняем столбец "№" от 1 до 25
-                    for (int i = 1; i <= 25; i++)
-                    {
-                        worksheet.Cells[i + 1, 1] = i;
-                    }
-
-                    // Получаем данные из DataGridView
-                    DataTable dt = (DataTable)dataGridView1.DataSource;
-
-                    // Записываем данные в столбец "ФИО"
-                    for (int i = 0; i < dt.Rows.Count; i++)
-                    {
-                        worksheet.Cells[i + 2, 2] = dt.Rows[i]["ФИО"];
-                    }
-
-                    // Сохраняем изменения в файле
-                    workbook.Save();
-                }
-
+                workbook.Save();
                 workbook.Close();
                 excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+                MessageBox.Show($"Ошибка при сохранение файла: {ex.Message}\n попробуйте еще раз!");
             }
-
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
-
-            MessageBox.Show("Данные сохранены в Excel файл!");
         }
 
     }

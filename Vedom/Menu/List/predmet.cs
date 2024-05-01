@@ -40,105 +40,123 @@ namespace Vedom.Menu.List
 
             try
             {
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+                try
+                {
+                    string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-                // Проверяем существует ли файл
-                if (!File.Exists(filePath))
-                {
-                    // Если файл не существует, создаем новый
-                    workbook = excelApp.Workbooks.Add();
-                    workbook.SaveAs(filePath);
+                    // Проверяем существует ли файл
+                    if (!File.Exists(filePath))
+                    {
+                        // Если файл не существует, создаем новый
+                        workbook = excelApp.Workbooks.Add();
+                        workbook.SaveAs(filePath);
+                    }
+                    else
+                    {
+                        workbook = excelApp.Workbooks.Open(filePath);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    workbook = excelApp.Workbooks.Open(filePath);
+                    MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
                 }
+
+                if (workbook != null)
+                {
+                    Excel.Worksheet worksheet = null;
+
+                    // Проверяем существует ли лист "студенты"
+                    bool studentsSheetExists = false;
+                    foreach (Excel.Worksheet sheet in workbook.Sheets)
+                    {
+                        if (sheet.Name == studentsSheetName)
+                        {
+                            worksheet = sheet;
+                            studentsSheetExists = true;
+                            break;
+                        }
+                    }
+
+                    // Если лист "студенты" не существует, создаем его
+                    if (!studentsSheetExists)
+                    {
+                        worksheet = workbook.Sheets.Add();
+                        worksheet.Name = studentsSheetName;
+                        workbook.Save(); // Сохраняем изменения в файле
+                    }
+
+                    if (worksheet != null)
+                    {
+                        // Создаем DataTable для хранения данных
+
+                        dt.Columns.Add("Семестр");
+                        dt.Columns.Add("Название");
+                        dt.Columns.Add("Тип оценивания");
+                        dt.Columns.Add("Преподаватель");
+
+
+                        // Добавление данных о семестре для каждой записи
+                        for (int i = 2; i <= worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
+                        {
+                            DataRow row = dt.NewRow();
+                            row["Семестр"] = worksheet.Cells[i, 1].Value;
+                            row["Название"] = worksheet.Cells[i, 2].Value;
+                            row["Тип оценивания"] = worksheet.Cells[i, 3].Value;
+                            row["Преподаватель"] = worksheet.Cells[i, 4].Value;
+
+                            // Пример установки значения семестра для каждой записи
+
+                            dt.Rows.Add(row);
+                        }
+
+                        // Отображаем данные в DataGridView
+                        dataGridView1.DataSource = dt;
+
+                    }
+
+                    
+                }
+
+                
+                dataGridView1.Columns[0].Width = 80;
+                dataGridView1.Columns[1].Width = 300;
+                dataGridView1.Columns[2].Width = 160;
+                dataGridView1.Columns[3].Width = 200;
+                dataGridView1.Visible = true;
+                label1.Visible = false;
+
+                List<string> semestersList = new List<string>();
+                semestersList.Add("");
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+                    if (!row.IsNewRow) // проверяем, что это не новая строка
+                    {
+                        string semester = row.Cells["Семестр"].Value.ToString();
+                        if (!string.IsNullOrEmpty(semester) && !semestersList.Contains(semester))
+                        {
+                            semestersList.Add(semester);
+                        }
+                    }
+                }
+                comboBox1.DataSource = semestersList;
+
+                workbook.Save();
+                workbook.Close();
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
-            }
-
-            if (workbook != null)
-            {
-                Excel.Worksheet worksheet = null;
-
-                // Проверяем существует ли лист "студенты"
-                bool studentsSheetExists = false;
-                foreach (Excel.Worksheet sheet in workbook.Sheets)
-                {
-                    if (sheet.Name == studentsSheetName)
-                    {
-                        worksheet = sheet;
-                        studentsSheetExists = true;
-                        break;
-                    }
-                }
-
-                // Если лист "студенты" не существует, создаем его
-                if (!studentsSheetExists)
-                {
-                    worksheet = workbook.Sheets.Add();
-                    worksheet.Name = studentsSheetName;
-                    workbook.Save(); // Сохраняем изменения в файле
-                }
-
-                if (worksheet != null)
-                {
-                    // Создаем DataTable для хранения данных
-
-                    dt.Columns.Add("Семестр");
-                    dt.Columns.Add("Название");
-                    dt.Columns.Add("Тип оценивания");
-                    dt.Columns.Add("Преподаватель");
-
-
-                    // Добавление данных о семестре для каждой записи
-                    for (int i = 2; i <= worksheet.Cells.SpecialCells(Excel.XlCellType.xlCellTypeLastCell).Row; i++)
-                    {
-                        DataRow row = dt.NewRow();
-                        row["Семестр"] = worksheet.Cells[i, 1].Value;
-                        row["Название"] = worksheet.Cells[i, 2].Value;
-                        row["Тип оценивания"] = worksheet.Cells[i, 3].Value;
-                        row["Преподаватель"] = worksheet.Cells[i, 4].Value;
-
-                        // Пример установки значения семестра для каждой записи
-
-                        dt.Rows.Add(row);
-                    }
-
-                    // Отображаем данные в DataGridView
-                    dataGridView1.DataSource = dt;
-
-                }
-
+                MessageBox.Show($"Ошибка при открытии файла: {ex.Message}\n попробуйте еще раз!");
+                workbook.Save();
                 workbook.Close();
                 excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+
             }
-
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
-            dataGridView1.Columns[0].Width = 80;
-            dataGridView1.Columns[1].Width = 300;
-            dataGridView1.Columns[2].Width = 160;
-            dataGridView1.Columns[3].Width = 200;
-            dataGridView1.Visible = true;
-            label1.Visible = false;
-
-            List<string> semestersList = new List<string>();
-            semestersList.Add("");
-            foreach (DataGridViewRow row in dataGridView1.Rows)
-            {
-                if (!row.IsNewRow) // проверяем, что это не новая строка
-                {
-                    string semester = row.Cells["Семестр"].Value.ToString();
-                    if (!string.IsNullOrEmpty(semester) && !semestersList.Contains(semester))
-                    {
-                        semestersList.Add(semester);
-                    }
-                }
-            }
-            comboBox1.DataSource = semestersList;
-
         }
 
 
@@ -191,147 +209,161 @@ namespace Vedom.Menu.List
 
             try
             {
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-
-                // Проверяем существует ли файл
-                if (!File.Exists(filePath))
+                try
                 {
-                    // Если файл не существует, создаем новый
-                    workbook = excelApp.Workbooks.Add();
-                    workbook.SaveAs(filePath);
-                }
-                else
-                {
-                    workbook = excelApp.Workbooks.Open(filePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
-            }
+                    string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-            if (workbook != null)
-            {
-                Excel.Worksheet worksheet = null;
-
-                // Проверяем существует ли лист "студенты"
-                bool studentsSheetExists = false;
-                foreach (Excel.Worksheet sheet in workbook.Sheets)
-                {
-                    if (sheet.Name == studentsSheetName)
+                    // Проверяем существует ли файл
+                    if (!File.Exists(filePath))
                     {
-                        worksheet = sheet;
-                        studentsSheetExists = true;
-                        break;
+                        // Если файл не существует, создаем новый
+                        workbook = excelApp.Workbooks.Add();
+                        workbook.SaveAs(filePath);
+                    }
+                    else
+                    {
+                        workbook = excelApp.Workbooks.Open(filePath);
                     }
                 }
-
-                // Если лист "студенты" не существует, создаем его
-                if (!studentsSheetExists)
+                catch (Exception ex)
                 {
-                    worksheet = workbook.Sheets.Add();
-                    worksheet.Name = studentsSheetName;
-                    workbook.Save(); // Сохраняем изменения в файле
+                    MessageBox.Show("Ошибка при открытии файла: " + ex.Message);
                 }
 
-
-
-
-
-
-                if (worksheet != null)
+                if (workbook != null)
                 {
-                    // Удаление содержимого
-                    worksheet.Cells.ClearContents();
-                    // Удаление форматирования
-                    worksheet.Cells.ClearFormats();
-                    // Получаем данные из DataGridView
+                    Excel.Worksheet worksheet = null;
 
-                    worksheet.Cells[1, 1].Value = ("Семестр");
-                    worksheet.Cells[1, 2].Value = ("Название");
-                    worksheet.Cells[1, 3].Value = ("Тип оценивания");
-                    worksheet.Cells[1, 4].Value = ("Преподаватель");
-
-                    comboBox1.SelectedItem = "";
-                    // Запись данных
-                    for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                    // Проверяем существует ли лист "студенты"
+                    bool studentsSheetExists = false;
+                    foreach (Excel.Worksheet sheet in workbook.Sheets)
                     {
-                        for (int j = 0; j < dataGridView1.Columns.Count; j++)
+                        if (sheet.Name == studentsSheetName)
                         {
-                            if (dataGridView1.Rows[i].Cells[j].Value != null)
-                            {
-                                worksheet.Cells[i + 2, j + 1] = dataGridView1.Rows[i].Cells[j].Value.ToString();
-                            }
-                            else
-                            {
-                                // Обработка случая, когда значение ячейки равно null
-                                worksheet.Cells[i + 2, j + 1] = ""; // Или другое значение по умолчанию
-                            }
+                            worksheet = sheet;
+                            studentsSheetExists = true;
+                            break;
                         }
                     }
 
-                    Excel.Range usedRange = worksheet.UsedRange;
-                    int lastRow = usedRange.Rows.Count;
-
-                    // Временно добавляем колонку с числовым значением для порядка сортировки
-                    Excel.Range tempColumn = worksheet.Cells[1, usedRange.Columns.Count + 1]; // Начинаем с последнего столбца + 1
-                    tempColumn.Value = "0"; // Значение по умолчанию для всех строк
-                    for (int i = 2; i <= lastRow; i++)
+                    // Если лист "студенты" не существует, создаем его
+                    if (!studentsSheetExists)
                     {
-                        string value = worksheet.Cells[i, 3].Value.ToString(); // Значение из третьего столбца
-                        switch (value)
-                        {
-                            case "Экзамен":
-                                tempColumn.Cells[i, 1].Value = "1";
-                                break;
-                            case "Зачет":
-                                tempColumn.Cells[i, 1].Value = "2";
-                                break;
-                            case "Курсовик":
-                                tempColumn.Cells[i, 1].Value = "3";
-                                break;
-                            case "Практика":
-                                tempColumn.Cells[i, 1].Value = "4";
-                                break;
-                        }
+                        worksheet = workbook.Sheets.Add();
+                        worksheet.Name = studentsSheetName;
+                        workbook.Save(); // Сохраняем изменения в файле
                     }
-                    // Сортировка по столбцу 1 (A) по возрастанию, начиная со второй строки
-                    Excel.Range sortRange = worksheet.Range["A2"].Resize[lastRow - 1]; // Игнорируем первую строку
-
-                    // Сортировка по временной колонке, начиная со второй строки
-                    sortRange = worksheet.Range["A2", tempColumn.Cells[lastRow, 1]]; // Диапазон от A2 до временной колонки в последней строке
-                    sortRange.Sort(sortRange.Columns[usedRange.Columns.Count + 1], Excel.XlSortOrder.xlAscending);
-                    // Удаляем временную колонку
-                    tempColumn.EntireColumn.Delete();
 
 
+
+
+
+
+                    if (worksheet != null)
+                    {
+                        // Удаление содержимого
+                        worksheet.Cells.ClearContents();
+                        // Удаление форматирования
+                        worksheet.Cells.ClearFormats();
+                        // Получаем данные из DataGridView
+
+                        worksheet.Cells[1, 1].Value = ("Семестр");
+                        worksheet.Cells[1, 2].Value = ("Название");
+                        worksheet.Cells[1, 3].Value = ("Тип оценивания");
+                        worksheet.Cells[1, 4].Value = ("Преподаватель");
+
+                        comboBox1.SelectedItem = "";
+                        // Запись данных
+                        for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                        {
+                            for (int j = 0; j < dataGridView1.Columns.Count; j++)
+                            {
+                                if (dataGridView1.Rows[i].Cells[j].Value != null)
+                                {
+                                    worksheet.Cells[i + 2, j + 1] = dataGridView1.Rows[i].Cells[j].Value.ToString();
+                                }
+                                else
+                                {
+                                    // Обработка случая, когда значение ячейки равно null
+                                    worksheet.Cells[i + 2, j + 1] = ""; // Или другое значение по умолчанию
+                                }
+                            }
+                        }
+
+                        Excel.Range usedRange = worksheet.UsedRange;
+                        int lastRow = usedRange.Rows.Count;
+
+                        // Временно добавляем колонку с числовым значением для порядка сортировки
+                        Excel.Range tempColumn = worksheet.Cells[1, usedRange.Columns.Count + 1]; // Начинаем с последнего столбца + 1
+                        tempColumn.Value = "0"; // Значение по умолчанию для всех строк
+                        for (int i = 2; i <= lastRow; i++)
+                        {
+                            string value = worksheet.Cells[i, 3].Value.ToString(); // Значение из третьего столбца
+                            switch (value)
+                            {
+                                case "Экзамен":
+                                    tempColumn.Cells[i, 1].Value = "1";
+                                    break;
+                                case "Зачет":
+                                    tempColumn.Cells[i, 1].Value = "2";
+                                    break;
+                                case "Курсовик":
+                                    tempColumn.Cells[i, 1].Value = "3";
+                                    break;
+                                case "Практика":
+                                    tempColumn.Cells[i, 1].Value = "4";
+                                    break;
+                            }
+                        }
+                        // Сортировка по столбцу 1 (A) по возрастанию, начиная со второй строки
+                        Excel.Range sortRange = worksheet.Range["A2"].Resize[lastRow - 1]; // Игнорируем первую строку
+
+                        // Сортировка по временной колонке, начиная со второй строки
+                        sortRange = worksheet.Range["A2", tempColumn.Cells[lastRow, 1]]; // Диапазон от A2 до временной колонки в последней строке
+                        sortRange.Sort(sortRange.Columns[usedRange.Columns.Count + 1], Excel.XlSortOrder.xlAscending);
+                        // Удаляем временную колонку
+                        tempColumn.EntireColumn.Delete();
+
+
+                    }
+
+                    // Создаем коллекцию строк
+                    StringCollection semestr = Properties.Settings.Default.semestr;
+                    // Преобразуем коллекцию в List<string> для сортировки
+                    List<string> sortedSemestr = semestr.Cast<string>().ToList();
+                    // Сортируем список по возрастанию
+                    sortedSemestr.Sort();
+                    // Создаем новую коллекцию строк
+                    StringCollection sortedCollection = new StringCollection();
+                    // Добавляем отсортированные элементы обратно в StringCollection
+                    foreach (var item in sortedSemestr)
+                    {
+                        sortedCollection.Add(item);
+                    }
+                    // Присваиваем отсортированную коллекцию переменной semestr
+                    Properties.Settings.Default.semestr = sortedCollection;
+                    Properties.Settings.Default.Save();
+
+
+                    
                 }
-
-                // Создаем коллекцию строк
-                StringCollection semestr = Properties.Settings.Default.semestr;
-                // Преобразуем коллекцию в List<string> для сортировки
-                List<string> sortedSemestr = semestr.Cast<string>().ToList();
-                // Сортируем список по возрастанию
-                sortedSemestr.Sort();
-                // Создаем новую коллекцию строк
-                StringCollection sortedCollection = new StringCollection();
-                // Добавляем отсортированные элементы обратно в StringCollection
-                foreach (var item in sortedSemestr)
-                {
-                    sortedCollection.Add(item);
-                }
-                // Присваиваем отсортированную коллекцию переменной semestr
-                Properties.Settings.Default.semestr = sortedCollection;
-                Properties.Settings.Default.Save();
-
 
                 workbook.Save();
                 workbook.Close();
                 excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+                MessageBox.Show("Данные сохранены в Excel файл!");
             }
-            System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
-            MessageBox.Show("Данные сохранены в Excel файл!");
-
+            catch (Exception ex)
+            {
+                workbook.Save();
+                workbook.Close();
+                excelApp.Quit();
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(excelApp);
+                MessageBox.Show($"Ошибка при сохранение файла: {ex.Message}\n попробуйте еще раз!");
+            }
         }
 
 
