@@ -52,16 +52,9 @@ namespace Vedom.Menu.List
             }
             if (Properties.Settings.Default.semsestSave != null)
             {
-                if ((Properties.Settings.Default.semsestSave == ""))
-                {
-                    comboBox1.SelectedIndex = 1;
-                }
-                else
-                {
-                    comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
-                }
-
+                comboBox1.SelectedItem = Properties.Settings.Default.semsestSave;
             }
+
         }
 
         private void LoadDataFromExcel(string selectedMonthYear)
@@ -250,6 +243,7 @@ namespace Vedom.Menu.List
             }
             return false;
         }
+
 
         private void ClearDataGridView()
         {
@@ -637,6 +631,8 @@ namespace Vedom.Menu.List
                 Range1.ColumnWidth = 4;
                 worksheet.Columns[1].AutoFit();
 
+
+
                 // ячейки
                 Excel.Range Rang1 = worksheet.Range[worksheet.Cells[5, 3], worksheet.Cells[29, 20]];
                 Rang1.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
@@ -659,8 +655,10 @@ namespace Vedom.Menu.List
                 worksheet.PageSetup.BottomMargin = excelApp.InchesToPoints(0.5);
 
                 // Установить масштаб для вписывания листа на одну страницу
+                worksheet.PageSetup.Zoom = false;
                 worksheet.PageSetup.FitToPagesWide = 1;
                 worksheet.PageSetup.FitToPagesTall = 1;
+
 
                 if (Printer == 1)
                 {

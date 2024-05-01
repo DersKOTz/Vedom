@@ -780,6 +780,7 @@ namespace Vedom.Menu.List
                 Excel.Range allHB = worksheet.Range[worksheet.Cells[4, 1], worksheet.Cells[7, 20]];
                 Excel.Range allHB2 = worksheet.Range[worksheet.Cells[8, 3], worksheet.Cells[32, 17]];
                 Excel.Range allHB3 = worksheet.Range[worksheet.Cells[8, 18], worksheet.Cells[33, 20]];
+                worksheet.Cells[5, 14].ColumnWidth = 5;
 
                 // рапмки
                 Excel.Range rangeRama = worksheet.Range[worksheet.Cells[4, 1], worksheet.Cells[33, 20]];
@@ -820,6 +821,7 @@ namespace Vedom.Menu.List
                 worksheet.PageSetup.BottomMargin = excelApp.InchesToPoints(0.5);
 
                 // Установить масштаб для вписывания листа на одну страницу
+                worksheet.PageSetup.Zoom = false;
                 worksheet.PageSetup.FitToPagesWide = 1;
                 worksheet.PageSetup.FitToPagesTall = 1;
 

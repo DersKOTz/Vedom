@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -144,7 +145,14 @@ namespace Vedom.Menu
         private void button1_Click_1(object sender, EventArgs e)
         {
             string filePath = "vedom.xlsx";
-            Process.Start(filePath);
+            if (!File.Exists(filePath))
+            {
+                MessageBox.Show("Невозможно открыть книгу (не существует)");
+            }
+            else
+            {
+                Process.Start(filePath);
+            }
         }
 
         private void propusk_Click_1(object sender, EventArgs e)
